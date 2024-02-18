@@ -67,7 +67,7 @@ export const deleteFoodById = async (req: Request, res: Response) => {
     const deleteQuery = 'DELETE FROM foods WHERE id = $1';
     await pool.query(deleteQuery, [id]);
 
-    return res.status(200).send({ message: 'food deleted successfully' });
+    return res.status(200).send({ message: `Food with id ${id} deleted successfully` });
   } catch (err) {
     console.error(err);
     res.status(500).send('Error deleting food');
@@ -78,18 +78,6 @@ export const updateFoodById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { name, category_id, img_url } = req.body;
-
-    // if (!name || typeof name !== 'string') {
-    //   return res.status(400).send('Invalid name provided');
-    // }
-
-    // if (category_id && typeof category_id !== 'number') {
-    //   return res.status(400).send('Invalid category_id provided');
-    // }
-
-    // if (img_url && typeof img_url !== 'string') {
-    //   return res.status(400).send('Invalid img_url provided');
-    // }
 
     // Check if food exists (adjust error message)
     const foodSql = 'SELECT * FROM foods WHERE id = $1';

@@ -8,6 +8,7 @@ import { connectDB } from './database';
 import StaffRouter from './routes/staff.router';
 import AuthRouter from './routes/auth.router';
 import FoodRouter from './routes/food.router';
+import OrderRouter from './routes/order.router';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use('/staff', StaffRouter);
 app.use('/auth', AuthRouter);
 app.use('/food', FoodRouter);
+app.use('/order', OrderRouter);
 
 async function startServer() {
   await connectDB();
