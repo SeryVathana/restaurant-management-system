@@ -1,14 +1,28 @@
+import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
+import { User } from "lucide-react";
+import { UserAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+
 const Navbar = () => {
+  const auth = UserAuth();
+
+  useEffect(() => {
+    console.log(auth);
+  }, [auth]);
+
   return (
     <nav className="flex justify-between text-black w-full my-10">
-      <div className="px-4 xl:px-12 flex w-full items-center">
-        <p className="font-sans text-2xl font-medium">Fooddie</p>
+      <div className="px-4 flex w-full items-center">
+        <Link to={"/"} className="font-sans text-2xl font-medium">
+          Fooddie
+        </Link>
 
-        <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12">
+        <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12 items-center">
           <li>
-            <a className="hover:underline" href="#">
+            <Link className="hover:underline" to="/menu">
               Menus
-            </a>
+            </Link>
           </li>
           <li>
             <a className="hover:underline" href="#">
@@ -16,29 +30,26 @@ const Navbar = () => {
             </a>
           </li>
           <li>
-            <a className="hover:underline border border-gray-300 px-4 py-2 rounded-3xl bg-yellow-200" href="#">
-              Order Now
-            </a>
+            <Link to="/order">
+              <Button className="rounded-full" variant={"outline"}>
+                Order Now
+              </Button>
+            </Link>
           </li>
         </ul>
-        <div className="ml-auto flex items-center space-x-2">
-          <a href="#" className="text-blue-500 hover:text-blue-700">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-8 h-8">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-              />
-            </svg>
-          </a>
-          <ul className="ml-2 pr-4 mx-auto font-bold space-x-12 whitespace-nowrap ">
-            <li>
-              <a className="hover:underline" href="#">
-                Log In
-              </a>
-            </li>
-          </ul>
+        <div className="flex gap-5 items-center">
+          <Link to="/login">
+            <Button className="ml-auto flex items-center space-x-2  gap-2">
+              <User className="w-5 h-5" />
+              Log In
+            </Button>
+          </Link>
+          <Link to="/register">
+            <Button className="ml-auto flex items-center space-x-2 gap-2" variant={"secondary"}>
+              <User className="w-5 h-5" />
+              Register
+            </Button>
+          </Link>
         </div>
       </div>
     </nav>
