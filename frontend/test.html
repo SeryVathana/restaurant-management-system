@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <!-- follow me on twitter @asad_codes -->
+    
+    <!-- landing page -->
+    
+    <div class="flex flex-wrap h-screen py-5">
+      <section class="relative mx-auto">
+        <!-- navbar -->
+        <!-- <nav class="flex justify-between text-black w-full">
+          <div class="px-4 xl:px-12 flex w-full items-center">  
+            <p class="font-sans text-2xl font-medium">Fooddie</p>
+  
+            <ul class="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12">
+              <li><a class="hover:underline" href="#">Menus</a></li>
+              <li><a class="hover:underline" href="#">About Us</a></li>
+              <li><a class="hover:underline border border-gray-300 px-4 py-2 rounded-3xl bg-yellow-200" href="#">Order Now</a></li>
+        
+            </ul>
+            <div class="ml-auto flex items-center space-x-2">
+              <a href="#" class="text-blue-500 hover:text-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-8 h-8">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+              </a>
+              <ul class="ml-2 pr-4 mx-auto font-bold space-x-12 whitespace-nowrap ">
+                <li><a class="hover:underline" href="#">Log In</a></li>
+              </ul>
+            </div>
+          </div>  
+        </nav> -->
+
+        <!-- landing page -->
+        <div class="mx-4 py-20 lg:flex">
+          <div class="text-center lg:text-left lg:w-1/2">
+            <h1 class="text-4xl lg:text-5xl xl:text-6xl font-bold leading-none">Main title of your
+            landing page</h1>
+            <p class="text-xl lg:text-2xl mt-6 font-light">Free landing page template to promote your
+            business startup and generate leads for the offered services
+            </p>                            
+          </div>
+
+          <div class="lg:w-1/2 ">
+            <img src="https://cdn.pixabay.com/photo/2015/09/04/11/31/fish-amok-921926_1280.jpg" alt="" class="w-full h-max">
+          </div>
+        </div>
+      </section>
+
+      <div class="mx-4 py-4 lg:flex">
+        <div class="flex justify-start mx-4 lg:w-1/2">
+          <div class="grid grid-cols-4 gap-4">
+            <div class="col-span-2">
+              <img src="https://i.pinimg.com/564x/81/8f/13/818f139c8adae48b010d9e5202348289.jpg" alt="Stand Image" class="w-full h-auto">
+            </div>
+            <div class="col-span-2 grid grid-rows-2 gap-0">
+              <div>
+                <img src="https://img.freepik.com/free-photo/spicy-fried-tubtim-fish-salad-spicy-thai-food_1150-26481.jpg?w=1060&t=st=1709894797~exp=1709895397~hmac=ab00c396cfb6a8ab14737393fa496c409f2e0bfacaa0dafd7b7b6dd8b82748c9" alt="Image 2" class="w-full h-auto">
+              </div>
+              <div>
+                <img src="https://cdn.pixabay.com/photo/2018/11/30/16/26/cambodia-3848087_1280.jpg" alt="Image 3" class="w-full h-auto">
+              </div>
+            </div>
+          </div>
+          
+        </div>
+
+
+        <div class="text-center lg:text-right lg:w-1/2 lg:pl-8">
+            <h1 class="text-4xl lg:text-5xl xl:text-6xl font-bold leading-none">Main title of your landing page</h1>
+            <p class="text-xl lg:text-2xl mt-6 font-light">Free landing page template to promote your business startup and generate leads for the offered services</p>
+          </div>
+        </div>
+        <section class="w-full mx-auto">
+          <div class="py-20">
+            <h3 class="text-center font-sans font-bold text-3xl">Our Services</h3>
+          </div>
+          <div class="flex justify-between items-center">
+            <!--  -->
+            <div class="w-60">
+              <a href="">
+                <svg viewBox="0 -0.47 44.16 44.16" xmlns="http://www.w3.org/2000/svg" fill="#000000" class="w-full h-auto"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <defs> <style>.cls-1{fill:#ff6368;}.cls-2{fill:#d34a5b;}.cls-3{fill:#354251;}</style> </defs> <g data-name="Layer 2" id="Layer_2"> <g data-name="Layer 1" id="Layer_1-2"> <g id="noodle"> <path class="cls-1" d="M41.85,19.93H3A19.45,19.45,0,0,0,14.38,37.66v2.5a1.69,1.69,0,0,0,1.69,1.69H28.72a1.69,1.69,0,0,0,1.69-1.69v-2.5A19.46,19.46,0,0,0,41.85,19.93Z"></path> <path class="cls-2" d="M24.2,40.16v-2.5A19.46,19.46,0,0,1,12.76,19.93H3A19.45,19.45,0,0,0,14.38,37.66v2.5a1.69,1.69,0,0,0,1.69,1.69h9.81A1.69,1.69,0,0,1,24.2,40.16Z"></path> <path class="cls-3" d="M28.72,43.21H16.07A3.06,3.06,0,0,1,13,40.16V38.52A20.89,20.89,0,0,1,1.58,19.93,1.36,1.36,0,0,1,3,18.57h38.9a1.36,1.36,0,0,1,1.36,1.36A20.88,20.88,0,0,1,31.77,38.52v1.64A3.06,3.06,0,0,1,28.72,43.21ZM4.36,21.29A18.13,18.13,0,0,0,15,36.42a1.37,1.37,0,0,1,.79,1.24v2.5a.32.32,0,0,0,.33.32H28.72a.32.32,0,0,0,.33-.32v-2.5a1.36,1.36,0,0,1,.8-1.24A18.14,18.14,0,0,0,40.43,21.29Z"></path> <path class="cls-3" d="M13.87,34.28a1.39,1.39,0,0,1-.93-.37,13.79,13.79,0,0,1-4.12-7.7,1.36,1.36,0,1,1,2.68-.46,11.12,11.12,0,0,0,3.31,6.18A1.37,1.37,0,0,1,13.87,34.28Z"></path> <path class="cls-3" d="M7,20c-2.33-.19-1.12-3.29-.32-4,.33-.39.41-.5.41-.85s-.08-.47-.41-.85a3.78,3.78,0,0,1,0-5.21,1.06,1.06,0,0,0,0-1.7,3.82,3.82,0,0,1,0-5.21c.33-.38.41-.5.41-.85A1.36,1.36,0,0,1,8.42,0c2.33.19,1.12,3.29.32,4-.33.39-.41.5-.41.86s.08.46.41.85a3.77,3.77,0,0,1,0,5.2,1.06,1.06,0,0,0,0,1.7,3.82,3.82,0,0,1,0,5.21c-.33.38-.41.5-.41.85A1.36,1.36,0,0,1,7,20Z"></path> <path class="cls-3" d="M12,20c-2.34-.19-1.12-3.29-.32-4,.32-.39.41-.5.41-.85s-.09-.47-.41-.85a3.78,3.78,0,0,1,0-5.21,1.07,1.07,0,0,0,0-1.7,3.81,3.81,0,0,1,0-5.21c.32-.38.41-.5.41-.85A1.36,1.36,0,0,1,13.49,0c2.33.19,1.11,3.29.31,4-.32.39-.4.5-.4.86s.08.46.4.85a3.74,3.74,0,0,1,0,5.2,1.07,1.07,0,0,0,0,1.7,3.8,3.8,0,0,1,0,5.21c-.32.38-.4.5-.4.85A1.36,1.36,0,0,1,12,20Z"></path> <path class="cls-3" d="M17.1,20c-2.33-.19-1.11-3.29-.31-4,.32-.39.4-.5.4-.85s-.08-.47-.4-.85a3.76,3.76,0,0,1,0-5.21,1.07,1.07,0,0,0,0-1.7,3.8,3.8,0,0,1,0-5.21c.32-.38.4-.5.4-.85A1.36,1.36,0,0,1,18.55,0c2.34.19,1.12,3.29.32,4-.32.39-.41.5-.41.86s.09.46.41.85a3.74,3.74,0,0,1,0,5.2,1.07,1.07,0,0,0,0,1.7,3.81,3.81,0,0,1,0,5.21c-.32.38-.41.5-.41.85A1.36,1.36,0,0,1,17.1,20Z"></path> <path class="cls-3" d="M42.82,2.72H1.36A1.36,1.36,0,0,1,1.36,0H42.82A1.36,1.36,0,0,1,42.82,2.72Z"></path> <path class="cls-3" d="M42.72,10.63S1.39,6.45,1.33,6.46A1.36,1.36,0,0,1,1.6,3.75L42.85,7.92A1.36,1.36,0,0,1,42.72,10.63Z"></path> </g> </g> </g> </g></svg>
+              </a>
+              <p class="text-black font-sans font-bold text-2xl text-center my-5">Breakfast</p>
+            </div>
+            <!--  -->
+            <div class="w-60">
+              <a href="">
+                <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 122.88 119.66" fill="#283747" class="w-full h-auto"><title>rice-bowl</title><path d="M34.34,112.6C23.61,109.25,16,104.52,10.48,97.41S1.84,81,0,68.29a1.87,1.87,0,0,1,0-.67A17.45,17.45,0,0,1,4.12,56.35c2-2.45,4.85-4.2,8.68-5.56a11.88,11.88,0,0,1,3.22-7,14.32,14.32,0,0,1,7.92-4.12A28.62,28.62,0,0,1,38.23,32a30.55,30.55,0,0,1,17.29,1.2c.35.14,1.49.71,2.52,1.23a.9.9,0,0,1,.35.28A22.64,22.64,0,0,1,70.08,30a24.51,24.51,0,0,1,8.49.61L92.1,3.52c1.23-2.4,3.2-4.7,7-2.84a6.28,6.28,0,0,1,2.52,2.18c1.74,2.66.28,4.51-1,6.8L85.94,34a16.86,16.86,0,0,1,3,2.68l.11.13A13.43,13.43,0,0,1,92,42.4c1.28.36,2.51.77,3.67,1.21l17-28.36c1.42-2.29,3.56-4.42,7.22-2.27a6.36,6.36,0,0,1,2.34,2.38c1.51,2.79-.08,4.52-1.58,6.69L102.88,47.39a24.55,24.55,0,0,1,4.48,4,17.36,17.36,0,0,1,4.19,15.48,2.36,2.36,0,0,1-.16.47,2.14,2.14,0,0,1,.11.67,2.45,2.45,0,0,1,0,.27,47.22,47.22,0,0,1-10.6,27.93c-5.88,7-14.47,12.88-26.51,16.46h-.06v6.13a.86.86,0,0,1-.86.86H35.52a1.11,1.11,0,0,1-1.11-1.1v-5.93l-.07,0ZM82.18,61.39a2.17,2.17,0,0,1,0-4.34h5.14a2.17,2.17,0,0,1,0,4.34Zm-1.3-15a2.16,2.16,0,1,1-1.76,3.95l-4.69-2.11a2.16,2.16,0,0,1,1.76-3.95l4.69,2.11Zm-26,1.29a2.16,2.16,0,1,1,1.62-4l5.15,2.1a2.16,2.16,0,1,1-1.63,4l-5.14-2.1ZM53,61.39a2.17,2.17,0,0,1,0-4.34h5.14a2.17,2.17,0,0,1,0,4.34ZM35.5,51A2.16,2.16,0,0,1,33.74,47l4.69-2.11a2.16,2.16,0,1,1,1.76,3.94L35.5,51ZM25.42,61.39a2.17,2.17,0,0,1,0-4.34h5.15a2.17,2.17,0,0,1,0,4.34ZM5.15,66H107.32v0a13.16,13.16,0,0,0-3.24-11.72c-3-3.49-7.93-6.34-14.51-8a2.17,2.17,0,0,1-1.64-1.88,8.7,8.7,0,0,0-2.15-4.76l-.1-.1a15.24,15.24,0,0,0-6.44-4.15,20.32,20.32,0,0,0-8.73-1,18.36,18.36,0,0,0-10.26,4.4,2.14,2.14,0,0,1-1.49.59,8.55,8.55,0,0,1-2.68-1.08c-.91-.45-1.91-1-2.12-1a26,26,0,0,0-14.83-1,24.1,24.1,0,0,0-12.56,7,2.11,2.11,0,0,1-1.35.69,10,10,0,0,0-6.07,2.9A7.84,7.84,0,0,0,17,52.23a2.17,2.17,0,0,1-1.51,2.22c-3.76,1.17-6.41,2.61-8.06,4.63A11.57,11.57,0,0,0,5.15,66ZM96.68,76.3a1.52,1.52,0,1,1,2.8,1.16A57.45,57.45,0,0,1,97,82.78a56,56,0,0,1-3,5,1.52,1.52,0,1,1-2.51-1.7,53.33,53.33,0,0,0,2.87-4.74,55.13,55.13,0,0,0,2.39-5ZM88.31,90.23a1.51,1.51,0,1,1,2.31,2c-.89,1.06-1.82,2.07-2.76,3S86,97,85,97.82A1.51,1.51,0,1,1,83,95.48c.91-.75,1.81-1.57,2.69-2.44s1.76-1.84,2.58-2.81ZM13.68,94.94c4.9,6.38,11.88,10.66,21.71,13.75H73.52c11-3.33,18.9-8.68,24.25-15.09A42.65,42.65,0,0,0,107.29,70H4.38C6.14,80.82,9,88.88,13.68,94.94Z"/></svg>
+              </a>
+              <p class="text-black font-sans font-bold text-2xl text-center my-5">Lunch</p>
+            </div> 
+
+            <div class="w-80"> 
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 122.88 89.2" style="enable-background:new 0 0 122.88 89.2" xml:space="preserve" class="w-full h-auto"><style type="text/css">.st0{fill-rule:evenodd;clip-rule:evenodd;}</style><g><path class="st0" fill="#153951" d="M122.88,21.37c0.05,2.89-0.53,11.16-1.68,24.86h-1.78V89.2l-6,0V46.23h-0.99V0c2.02,0.31,3.76,1.23,5.15,2.75 C121.07,6.31,122.83,12.53,122.88,21.37L122.88,21.37z M107.27,44.52c0,12.04-4.24,22.33-12.72,30.81 c-8.5,8.5-18.77,12.74-30.81,12.74c-12,0-22.26-4.24-30.78-12.74c-8.5-8.48-12.77-18.77-12.77-30.81c0-12,4.26-22.24,12.77-30.76 c8.53-8.5,18.79-12.77,30.78-12.77c12.04,0,22.31,4.26,30.81,12.77C103.03,22.28,107.27,32.52,107.27,44.52L107.27,44.52 L107.27,44.52z M20.69,23.22c0,2.96-1.23,5.4-3.69,7.3c-2.43,1.9-3.66,3.57-3.66,4.96V89.2h-6V35.48c0-1.4-1.23-3.06-3.66-4.96 C1.23,28.62,0,26.19,0,23.22C0,15.18,1.78,7.42,5.37,0v19.9h3.18V0h3.52v19.9h3.25V0C18.89,7.42,20.69,15.18,20.69,23.22 L20.69,23.22z M95.49,44.52c0-8.74-3.08-16.21-9.27-22.4c-6.19-6.19-13.68-9.27-22.48-9.27c-8.77,0-16.24,3.08-22.4,9.27 c-6.19,6.19-9.3,13.66-9.3,22.4c0,8.76,3.11,16.23,9.3,22.45c6.16,6.21,13.63,9.32,22.4,9.32c8.79,0,16.28-3.11,22.48-9.32 C92.4,60.75,95.49,53.28,95.49,44.52L95.49,44.52L95.49,44.52z M92.31,44.52c0,7.9-2.77,14.64-8.36,20.23 c-5.57,5.56-12.31,8.36-20.21,8.36c-7.85,0-14.58-2.8-20.16-8.36c-5.57-5.59-8.36-12.33-8.36-20.23c0-7.85,2.79-14.58,8.36-20.14 c5.59-5.56,12.31-8.36,20.16-8.36c7.9,0,14.65,2.8,20.21,8.36C89.54,29.94,92.31,36.67,92.31,44.52L92.31,44.52z"/></g></svg>
+              <p class="text-black font-sans font-bold text-2xl text-center my-5">Dinner</p>
+            </div>
+          </div>
+          <!-- footer -->
+          <footer class="bg-white dark:bg-gray-900">
+              <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+                  <div class="md:flex md:justify-between">
+                    <div class="mb-6 md:mb-0">
+                        <a href="" class="flex items-center">
+                            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Fooddie</span>
+                        </a>
+                    </div>
+                    <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+                        <div>
+                            <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Restuarant</h2>
+                            <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                                <li class="mb-4">
+                                    <a href="" class="hover:underline">Our Story</a>
+                                </li>
+                                <li>
+                                    <a href="" class="hover:underline">About Chief</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Location</h2>
+                            <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                                <li class="mb-4">
+                                    <a href="https://maps.app.goo.gl/5zN31o4rLN9Lk4Rq9" class="hover:underline ">Phnom Penh</a>
+                                </li>
+                                <li class="mb-4">
+                                    <a href="https://maps.app.goo.gl/GQpG8avU8nwK8GWe7" class="hover:underline">Siem Reap</a>
+                                </li>
+                                <li>
+                                    <a href="https://maps.app.goo.gl/vZLDTv9xr1FWm2bQ6" class="hover:underline">Battambang</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Contact us</h2>
+                            <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                                <li class="mb-4">
+                                    <a href="#" class="hover:underline">Phone: (+885) 11 868 794</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="hover:underline">Email: fooddie12@gmail.com</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+                <div class="sm:flex sm:items-center sm:justify-between">
+                    <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 <a href="https://flowbite.com/" class="hover:underline">Flowbite™</a>. All Rights Reserved.
+                    </span>
+                    <div class="flex mt-4 sm:justify-center sm:mt-0">
+                        <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 8 19">
+                                  <path fill-rule="evenodd" d="M6.135 3H8V0H6.135a4.147 4.147 0 0 0-4.142 4.142V6H0v3h2v9.938h3V9h2.021l.592-3H5V3.591A.6.6 0 0 1 5.592 3h.543Z" clip-rule="evenodd"/>
+                              </svg>
+                            <span class="sr-only">Facebook page</span>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
+                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 21 16">
+                                  <path d="M16.942 1.556a16.3 16.3 0 0 0-4.126-1.3 12.04 12.04 0 0 0-.529 1.1 15.175 15.175 0 0 0-4.573 0 11.585 11.585 0 0 0-.535-1.1 16.274 16.274 0 0 0-4.129 1.3A17.392 17.392 0 0 0 .182 13.218a15.785 15.785 0 0 0 4.963 2.521c.41-.564.773-1.16 1.084-1.785a10.63 10.63 0 0 1-1.706-.83c.143-.106.283-.217.418-.33a11.664 11.664 0 0 0 10.118 0c.137.113.277.224.418.33-.544.328-1.116.606-1.71.832a12.52 12.52 0 0 0 1.084 1.785 16.46 16.46 0 0 0 5.064-2.595 17.286 17.286 0 0 0-2.973-11.59ZM6.678 10.813a1.941 1.941 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.919 1.919 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Zm6.644 0a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.918 1.918 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Z"/>
+                              </svg>
+                            <span class="sr-only">Discord community</span>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
+                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 17">
+                              <path fill-rule="evenodd" d="M20 1.892a8.178 8.178 0 0 1-2.355.635 4.074 4.074 0 0 0 1.8-2.235 8.344 8.344 0 0 1-2.605.98A4.13 4.13 0 0 0 13.85 0a4.068 4.068 0 0 0-4.1 4.038 4 4 0 0 0 .105.919A11.705 11.705 0 0 1 1.4.734a4.006 4.006 0 0 0 1.268 5.392 4.165 4.165 0 0 1-1.859-.5v.05A4.057 4.057 0 0 0 4.1 9.635a4.19 4.19 0 0 1-1.856.07 4.108 4.108 0 0 0 3.831 2.807A8.36 8.36 0 0 1 0 14.184 11.732 11.732 0 0 0 6.291 16 11.502 11.502 0 0 0 17.964 4.5c0-.177 0-.35-.012-.523A8.143 8.143 0 0 0 20 1.892Z" clip-rule="evenodd"/>
+                          </svg>
+                            <span class="sr-only">Twitter page</span>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
+                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd" d="M10 .333A9.911 9.911 0 0 0 6.866 19.65c.5.092.678-.215.678-.477 0-.237-.01-1.017-.014-1.845-2.757.6-3.338-1.169-3.338-1.169a2.627 2.627 0 0 0-1.1-1.451c-.9-.615.07-.6.07-.6a2.084 2.084 0 0 1 1.518 1.021 2.11 2.11 0 0 0 2.884.823c.044-.503.268-.973.63-1.325-2.2-.25-4.516-1.1-4.516-4.9A3.832 3.832 0 0 1 4.7 7.068a3.56 3.56 0 0 1 .095-2.623s.832-.266 2.726 1.016a9.409 9.409 0 0 1 4.962 0c1.89-1.282 2.717-1.016 2.717-1.016.366.83.402 1.768.1 2.623a3.827 3.827 0 0 1 1.02 2.659c0 3.807-2.319 4.644-4.525 4.889a2.366 2.366 0 0 1 .673 1.834c0 1.326-.012 2.394-.012 2.72 0 .263.18.572.681.475A9.911 9.911 0 0 0 10 .333Z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="sr-only">GitHub account</span>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
+                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M10 0a10 10 0 1 0 10 10A10.009 10.009 0 0 0 10 0Zm6.613 4.614a8.523 8.523 0 0 1 1.93 5.32 20.094 20.094 0 0 0-5.949-.274c-.059-.149-.122-.292-.184-.441a23.879 23.879 0 0 0-.566-1.239 11.41 11.41 0 0 0 4.769-3.366ZM8 1.707a8.821 8.821 0 0 1 2-.238 8.5 8.5 0 0 1 5.664 2.152 9.608 9.608 0 0 1-4.476 3.087A45.758 45.758 0 0 0 8 1.707ZM1.642 8.262a8.57 8.57 0 0 1 4.73-5.981A53.998 53.998 0 0 1 9.54 7.222a32.078 32.078 0 0 1-7.9 1.04h.002Zm2.01 7.46a8.51 8.51 0 0 1-2.2-5.707v-.262a31.64 31.64 0 0 0 8.777-1.219c.243.477.477.964.692 1.449-.114.032-.227.067-.336.1a13.569 13.569 0 0 0-6.942 5.636l.009.003ZM10 18.556a8.508 8.508 0 0 1-5.243-1.8 11.717 11.717 0 0 1 6.7-5.332.509.509 0 0 1 .055-.02 35.65 35.65 0 0 1 1.819 6.476 8.476 8.476 0 0 1-3.331.676Zm4.772-1.462A37.232 37.232 0 0 0 13.113 11a12.513 12.513 0 0 1 5.321.364 8.56 8.56 0 0 1-3.66 5.73h-.002Z" clip-rule="evenodd"/>
+                          </svg>
+                            <span class="sr-only">Dribbble account</span>
+                        </a>
+                    </div>
+                </div>
+              </div>
+          </footer>
+
+
+        </section>
+    </div>
+
+    <!-- Menus -->
+    <h2 class="m-5 text-3xl font-bold text-gray-900 text-center">Fooddie's Menus</h2>
+    <div class="mx-10">
+      <p class="font-bold text-gray-900 text-center text-2xl underline m-8">Breakfast</p>
+
+      <div class="flex flex-wrap justify-between mb-3">
+        <div class="w-full md:w-1/2">
+          <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Bay Sach Jruk</h5>
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">grilled pork marinated in a fragrant blend of soy sauce, garlic, accompanied by aromatic broken rice and a side of tangy pickled vegetables.</p>
+              <p class="mb-3 font-bold text-gray-900">$3.00</p>
+            </div>
+            <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://i.pinimg.com/564x/b3/5f/1d/b35f1d6db15515f66b717d4f81df5b3d.jpg" alt="" />
+          </a>
+        </div>
+        
+        <div class="w-full md:w-1/2">
+          <!-- Add another code block here -->
+          <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Borbor Kroeung</h5>
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">dish of simmered rice, water, chicken or pork and other ingredients to becomes thick and creamy.</p>
+              <p class="mb-3 font-bold text-gray-900">$3.00</p>
+            </div>
+            <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://images.deliveryhero.io/image/fd-kh/Products/1129689.jpg?width=%s" alt="" />
+          </a>
+        </div>
+      </div>
+      
+      <div class="flex flex-wrap justify-between mb-3">
+        <div class="w-full md:w-1/2">
+          <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Nom Banh Chok</h5>
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">rice noodles topped with green fish gravy and lots of fresh vegetables.</p>
+              <p class="mb-3 font-bold text-gray-900">$3.00</p>
+            </div>
+            <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://kohsantepheap.tv/wp-content/uploads/2020/07/8Q3A0210.jpg" alt="" />
+          </a>
+        </div>
+        
+        <div class="w-full md:w-1/2">
+          <!-- Add another code block here -->
+          <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Kuy Teav</h5>
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">noodle soup with pork or beef stock and rice vermicelli and toppings including bean sprouts and green onions.</p>
+              <p class="mb-3 font-bold text-gray-900">$3.00</p>
+            </div>
+            <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://i.pinimg.com/564x/f1/59/1a/f1591a705e641b7527a6aa7960cf7cfc.jpg" alt="" />
+          </a>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-between">
+        <div class="w-full md:w-1/2">
+          <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Lort Cha</h5>
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">stir-fried noodle with a lot of ingredients including vegetables, meat, and soy sauce</p>
+              <p class="mb-3 font-bold text-gray-900">$3.00</p>
+            </div>
+            <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://foodbuzz.site/api/v1/files/318C85CE-8CA3-4EAB-B8F8-81562011C6E8" alt="" />
+          </a>
+        </div>
+        
+        <div class="w-full md:w-1/2">
+          <!-- Add another code block here -->
+          <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Bay Cha</h5>
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">popular dish made by stir-frying cooked rice with vegetables and meat( beef, chicken) or seafood.</p>
+              <p class="mb-3 font-bold text-gray-900">$3.00</p>
+            </div>
+            <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://grantourismotravels.com/wp-content/uploads/2020/06/Cambodian-Fried-Rice-Recipe-Bai-Char-Copyright-2022-Terence-Carter-Grantourismo-T.jpg" alt="" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!--lunch-->
+    <div class="mx-10">
+      <p class="font-bold text-gray-900 text-center text-2xl underline m-8">Lunch</p>
+      <div class="flex flex-wrap justify-between mb-3">
+        <div class="w-full md:w-1/2">
+          <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Prohok Ktis</h5>
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">traditional Cambodian dish made with prahok, a fermented fish paste, combined with pork, coconut milk, and various spices.</p>
+              <p class="mb-3 font-bold text-gray-900">$3.00</p>
+            </div>
+            <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://i.ytimg.com/vi/exvscYPkrKg/maxresdefault.jpg" alt="" />
+          </a>
+        </div>
+        
+        <div class="w-full md:w-1/2">
+          <!-- Add another code block here -->
+          <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Kaw Sach Chrouk</h5>
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">caramelized braised pork belly with boil eggs. Served with steamed rice.</p>
+              <p class="mb-3 font-bold text-gray-900">$3.00</p>
+            </div>
+            <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://i.pinimg.com/564x/b2/1c/ee/b21ceef2c01fa6d1444a33d806d22228.jpg" alt="" />
+          </a>
+        </div>
+      </div>
+        
+      <div class="flex flex-wrap justify-between">
+        <div class="w-full md:w-1/2">
+        <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+          <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Samlor Machu</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Sour soup that is a combination of fish, water spinach, tamarind paste, fermented fish paste, and other ingredients.</p>
+            <p class="mb-3 font-bold text-gray-900">$3.00</p>
+          </div>
+          <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://i.pinimg.com/564x/b5/1e/bd/b51ebd4b891142fb2a469be62507f5a8.jpg" alt="" />
+        </a>
+      </div>
+      
+      <div class="w-full md:w-1/2">
+        <!-- Add another code block here -->
+        <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+          <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Samlor Machu kroeung sach ko</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">soup dish that combines the flavors of lemongrass, galangal, and turmeric with a variety of vegetables and beef.</p>
+            <p class="mb-3 font-bold text-gray-900">$3.00</p>
+          </div>
+          <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://soracambodia83273053.files.wordpress.com/2020/10/92.jpg?w=1024" alt="" />
+        </a>
+      </div>
+    </div>
+    <div class="flex flex-wrap justify-between mb-3">
+      <div class="w-full md:w-1/2">
+        <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+          <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Chicken Sour Soup</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+            <p class="mb-3 font-bold text-gray-900">$3.00</p>
+          </div>
+          <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://jongphov.com/wp-content/uploads/2021/08/%E1%9E%9F%E1%9F%92%E1%9E%84%E1%9F%84%E1%9E%9A%E1%9E%87%E1%9F%92%E1%9E%9A%E1%9E%80%E1%9F%8B%E1%9E%9F%E1%9E%B6%E1%9E%85%E1%9F%8B%E1%9E%98%E1%9E%B6%E1%9E%93%E1%9F%8B.jpg" alt="" />
+        </a>
+      </div>
+      
+      <div class="w-full md:w-1/2">
+        <!-- Add another code block here -->
+        <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+          <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Cha Sach Ko</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">stir fried beef with vegetables, such as bell peppers, onions, carrots, baby corn with a flavorful sauce.</p>
+            <p class="mb-3 font-bold text-gray-900">$3.00</p>
+          </div>
+          <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://i.pinimg.com/564x/94/a3/b8/94a3b8a92e195519e70f94c153cee1ae.jpg" alt="" />
+        </a>
+      </div>
+    </div>
+    </div>
+    <!--Dinner-->
+    <div class="mx-10">
+    <p class="font-bold text-gray-900 text-center text-2xl underline m-8">Dinner</p>
+    <div class="flex flex-wrap justify-between mb-3">
+      <div class="w-full md:w-1/2">
+        <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+          <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Sack Ko Ang</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Cambodian grilled beef dish. Thinly sliced beef is marinated in a mixture of ingredients.</p>
+            <p class="mb-3 font-bold text-gray-900">$3.00</p>
+          </div>
+          <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://i.pinimg.com/564x/01/05/b0/0105b04aa1414a7e5ce0462f9ffc44bc.jpg" alt="" />
+        </a>
+      </div>
+      
+      <div class="w-full md:w-1/2">
+        <!-- Add another code block here -->
+        <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+          <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Lok Lak Sach Ko</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">stir-fried beef slices in a light brown sauce, and served with rice or green salad and pepper sauce.</p>
+            <p class="mb-3 font-bold text-gray-900">$3.00</p>
+          </div>
+          <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://i.pinimg.com/564x/df/9c/c2/df9cc2df38720794db8d628a0c0a5d92.jpg" alt="" />
+        </a>
+      </div>
+    </div>
+    <div class="flex flex-wrap justify-between mb-3">
+      <div class="w-full md:w-1/2">
+        <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+          <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Chicken Soup</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+            <p class="mb-3 font-bold text-gray-900">$3.00</p>
+          </div>
+          <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://i.pinimg.com/564x/6c/14/e4/6c14e4e2de8ccc4f24b0efec42018397.jpg" alt="" />
+        </a>
+      </div>
+      
+      <div class="w-full md:w-1/2">
+        <!-- Add another code block here -->
+        <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+          <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Trey Chean Chu Aem</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Fish fried with a sweet chili sauce and vegetables, including pineapple, tomato, bell pappers and onions.</p>
+            <p class="mb-3 font-bold text-gray-900">$3.00</p>
+          </div>
+          <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://www.jongnhams.com/uploads/015%20224%20489/list4.jpg" alt="" />
+        </a>
+      </div>
+    </div>
+    <div class="flex flex-wrap justify-between">
+      <div class="w-full md:w-1/2">
+      <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+          <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Plea Sach Ko</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+            <p class="mb-3 font-bold text-gray-900">$3.00</p>
+            </div>
+            <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://i.pinimg.com/564x/82/af/57/82af576437bbae93383c9ae62eab71f5.jpg" alt="" />
+          </a>
+        </div>
+        
+        <div class="w-full md:w-1/2">
+          <!-- Add another code block here -->
+          <a href="#" class="flex flex-col items-start rounded-lg border border-gray-800 bg-white shadow hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <div class="flex flex-col justify-between pl-4 leading-normal w-2/3">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Moan Dot</h5>
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+              <p class="mb-3 font-bold text-gray-900">$3.00</p>
+            </div>
+            <img class="h-48 w-full object-cover md:h-48 md:w-52 md:rounded-none md:rounded-e-lg" src="https://i.pinimg.com/564x/7a/cc/c1/7accc1e7e3c76131705c2864e16eb891.jpg" alt="" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order -->
+    <section class="text-gray-700 body-font">
+      <div class="container mx-auto flex px-5 py-10 md:flex-row flex-col items-center">
+        <div class="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
+          <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">Start Your Order Now
+          </h1>
+          
+        </div>
+        <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
+          <img class="object-contain h-30 w-30 object-center float-right rounded" alt="hero" src="https://i.pinimg.com/564x/2c/d3/28/2cd3288a45254ca3f6a0251ce47b7bd4.jpg">
+        </div>
+      </div>
+    
+      <div class="flex justify-between px-10">
+        <!-- Left side: Search input -->
+        <div class="relative w-1/2 mr-2 pl-5">
+          <input
+            class="appearance-none border-2 pl-10 border-gray-300 hover:border-gray-400 transition-colors rounded-md w-full py-2 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-gray-600 focus:border-gray-600 focus:shadow-outline"
+            id="username"
+            type="text"
+            placeholder="Search..."
+          />
+          <div class="absolute right-0 inset-y-0 flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="-ml-1 mr-3 h-5 w-5 text-gray-400 hover:text-gray-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </div>
+        </div>
+    
+        <!-- Right side: Select dropdown -->
+        <select
+          id="pricingType"
+          name="pricingType"
+          class="w-32 md:w-40 h-10 border-2 border-gray-300 focus:outline-none focus:border-gray-600 text-gray-00 rounded px-2 md:px-3 py-0 md:py-1 tracking-wider pr-5"
+        >
+          <option value="All" selected>All</option>
+          <option value="Breakfast">Breakfast</option>
+          <option value="Lunch">Lunch</option>
+          <option value="Dinner">Dinner</option>
+        </select>
+      </div>
+    
+    </section>
+    <!-- yip yip -->
+    <div class="px-10">
+      <!-- breakfast -->
+      <div class="relative w-full overflow-hidden">
+        <input type="checkbox" class="peer absolute top-0 inset-x-0 w-full h-12 opacity-0 z-10 cursor-pointer">
+        <div class="h-12 w-full pl-5 flex items-center">
+          <h1 class="text-lg font-bold font-sans text-gray-900">Breakfast</h1>
+        </div>
+        <div class="absolute top-3 right-3 text-black transition-transform duration-500 rotate-0 peer-checked:rotate-180">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </div>
+        <div class="pl-5 overflow-hidden transition-all duration-500 max-h-0 peer-checked:max-h-full">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Breakfast Item 1 -->
+            <div class="bg-gray-100 p border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/20/1e/18/201e18f0292c0c6163f477784fb84939.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Breakfast Item 2 -->
+            <div class="bg-gray-100 p border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/44/8d/45/448d45eac11ad22e80f06227a2022d71.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Breakfast Item 3 -->
+            <div class="bg-gray-100 p border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/20/1e/18/201e18f0292c0c6163f477784fb84939.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- breakfast item 4 -->
+            <div class="bg-gray-100  border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/20/1e/18/201e18f0292c0c6163f477784fb84939.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- lunch -->
+      <div class="relative w-full overflow-hidden">
+        <input type="checkbox" class="peer absolute top-0 inset-x-0 w-full h-12 opacity-0 z-10 cursor-pointer">
+        <div class="h-12 w-full pl-5 flex items-center">
+          <h1 class="text-lg font-bold font-sans text-gray-900">Lunch</h1>
+        </div>
+        <div class="absolute top-3 right-3 text-black transition-transform duration-500 rotate-0 peer-checked:rotate-180">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </div>
+        <div class="pl-5 overflow-hidden transition-all duration-500 max-h-0 peer-checked:max-h-full">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Breakfast Item 1 -->
+            <div class="bg-gray-100 p border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/20/1e/18/201e18f0292c0c6163f477784fb84939.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Breakfast Item 2 -->
+            <div class="bg-gray-100 p border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/44/8d/45/448d45eac11ad22e80f06227a2022d71.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Breakfast Item 3 -->
+            <div class="bg-gray-100 p border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/20/1e/18/201e18f0292c0c6163f477784fb84939.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- breakfast item 4 -->
+            <div class="bg-gray-100  border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/20/1e/18/201e18f0292c0c6163f477784fb84939.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- dinner -->
+      <div class="relative w-full overflow-hidden">
+        <input type="checkbox" class="peer absolute top-0 inset-x-0 w-full h-12 opacity-0 z-10 cursor-pointer">
+        <div class="h-12 w-full pl-5 flex items-center">
+          <h1 class="text-lg font-bold font-sans text-gray-900">Dinner</h1>
+        </div>
+        <div class="absolute top-3 right-3 text-black transition-transform duration-500 rotate-0 peer-checked:rotate-180">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </div>
+        <div class="pl-5 overflow-hidden transition-all duration-500 max-h-0 peer-checked:max-h-full">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Breakfast Item 1 -->
+            <div class="bg-gray-100 p border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/20/1e/18/201e18f0292c0c6163f477784fb84939.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Breakfast Item 2 -->
+            <div class="bg-gray-100 p border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/44/8d/45/448d45eac11ad22e80f06227a2022d71.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Breakfast Item 3 -->
+            <div class="bg-gray-100 p border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/20/1e/18/201e18f0292c0c6163f477784fb84939.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- breakfast item 4 -->
+            <div class="bg-gray-100  border border-gray-900 rounded-md shadow-sm relative">
+              <input type="checkbox" class="absolute top-0 left-0 w-6 h-6 rounded-tl-md">
+              <img src="https://i.pinimg.com/564x/20/1e/18/201e18f0292c0c6163f477784fb84939.jpg" alt="Hot Noodle Soup (Kuy Teav)" class="w-full h-64 object-cover rounded-md">
+              <p class="text-sm p-2">Hot Noodle Soup (Kuy Teav)</p>
+              
+              <div class="flex items-center p-2">
+                <p class="text-lg font-semibold mr-3">$3.00</p>
+                <div class="ml-auto ">
+                  <label for="quantity" class="mr-4">Quantity</label>
+                  <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md  rounded-lg w-20 p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option selected>1</option>
+                    <option value="id">2</option>
+                    <option value="id">3</option>
+                    <option value="id">4</option>
+                    <option value="id">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- total -->
+      <div class="flex items-center justify-center sm:justify-end w-full my-10 px-5">
+        <div class="flex items-center justify-between">
+            <p class="font-manrope mx-10 font-semibold text-2xl leading-9 text-gray-900">Total</p>
+            <p class="font-manrope font-bold text-2xl leading-9 text-gray-900">$300.00</p>
+        </div>
+      </div>
+      <!-- About Costumer -->
+      <div class="px-5">
+        <div class="w-full font-bold text-lg">
+          <p>About Costumer</p>
+        </div>
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 items-center">
+            <div class="sm:col-span-3">
+              
+              <div class="mt-2">
+                <input type="text" name="first-name" id="first-name" autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 ">
+              </div>
+              <label for="first-name" class="block text-sm font-medium leading-6 text-gray-900">First name</label>
+            </div>
+    
+            <div class="sm:col-span-3">
+              <div class="mt-2">
+                <input type="text" name="last-name" id="last-name" autocomplete="family-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400">
+              </div>
+              <label for="last-name" class="block text-sm font-medium leading-6 text-gray-900">Last name</label>
+            </div>
+    
+            <div class="sm:col-span-3">
+              <div class="mt-2">
+                <input type="text" name="phone-number" id="phone-number" autocomplete="family-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400">
+              </div>
+              <label for="phone-number" class="block text-sm font-medium leading-6 text-gray-900">Phone Number</label>
+            </div>
+    
+            <div class="sm:col-span-3">
+              <div class="mt-2">
+                <input type="text" name="table-number" id="table-number" autocomplete="family-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400">
+              </div>
+              <label for="table-number" class="block text-sm font-medium leading-6 text-gray-900">Table Number</label>
+            </div>
+    
+            <div class="sm:col-span-3">
+              <div class="mt-2">
+                <textarea class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
+                            name="bio">
+                </textarea>
+                <label for="comment" class="block text-sm font-medium leading-6 text-gray-900">Comment</label>
+              </div>
+            </div>
+            <div class="sm:col-span-3 flex justify-end">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Submit</button>
+            </div>      
+        </div>
+    
+      </div>
+    </div>
+    
+    <!-- log in -->
+    <div class="flex flex-wrap">
+      <div class="w-full sm:w-6/12 mb-10">
+        <div class="container mx-auto h-full sm:p-10">
+          <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <h1 class="flex justify-center text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                    Log In
+                </h1>
+                <form class="space-y-4 md:space-y-6" action="#">
+                    <div>
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+                        <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="">
+                    </div>
+                    <div>
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                        <input type="password" name="password" id="password" placeholder="Password" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                              <input id="remember" aria-describedby="remember" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" required="">
+                            </div>
+                            <div class="ml-3 text-sm">
+                              <label for="remember" class="text-gray-500 dark:text-gray-300">Remember me</label>
+                            </div>
+                        </div>
+                        <a href="#" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="w-full text-black bg-green-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
+                    <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+                        Don’t have an account yet? <a href="#" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
+                    </p>
+                </form>
+          </div>
+          
+        </div>
+      </div>
+      <img src="https://as1.ftcdn.net/v2/jpg/02/84/70/12/1000_F_284701276_eHv6Yx8dcotf71ppDOrzUcfkJTCZW9s0.jpg" alt="Leafs" class="w-full h-48 object-cover sm:h-screen sm:w-6/12">
+    </div>
+  </body>
+</html>

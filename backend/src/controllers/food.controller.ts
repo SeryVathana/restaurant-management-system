@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import { pool } from '../database';
+import { Request, Response } from "express";
+import { pool } from "../database";
 
 export const getAllFoods = async (req: Request, res: Response) => {
   const { categoryId } = req.query;
-  let query = 'SELECT * FROM foods';
+  let query = "SELECT * FROM foods";
 
   if (categoryId) {
     query += ` WHERE category_id = ${categoryId}`;
@@ -14,13 +14,13 @@ export const getAllFoods = async (req: Request, res: Response) => {
     res.json(result.rows);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error retrieving foods');
+    res.status(500).send("Error retrieving foods");
   }
 };
 
 export const getFoodById = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const query = 'SELECT * FROM foods WHERE id = $1';
+  const { id } = req.query;
+  const query = "SELECT * FROM foods WHERE id = $1";
 
   try {
     const result = await pool.query(query, [id]);
@@ -28,10 +28,10 @@ export const getFoodById = async (req: Request, res: Response) => {
       return res.status(404).send({ message: `Food with id ${id} not found` });
     }
 
-    res.json(result.rows[0]);
+    res.status(200).send(result.rows[0]);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error retrieving food');
+    res.status(500).send("Error retrieving food");
   }
 };
 
@@ -39,17 +39,17 @@ export const addNewFood = async (req: Request, res: Response) => {
   const { name, category_id, img_url } = req.body;
 
   if (!name || !category_id) {
-    return res.status(400).send('Required fields are missing');
+    return res.status(400).send("Required fields are missing");
   }
 
-  const query = 'INSERT INTO foods (name, category_id, img_url) VALUES ($1, $2, $3) RETURNING *';
+  const query = "INSERT INTO foods (name, category_id, img_url) VALUES ($1, $2, $3) RETURNING *";
 
   try {
     const result = await pool.query(query, [name, category_id, img_url || null]);
-    res.json(result.rows[0]);
+    res.status(201).send("Food added successfully.");
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error adding food');
+    res.status(500).send("Error adding food");
   }
 };
 
@@ -57,20 +57,20 @@ export const deleteFoodById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const getQuery = 'SELECT * FROM foods WHERE id = $1';
+    const getQuery = "SELECT * FROM foods WHERE id = $1";
     const result = await pool.query(getQuery, [id]);
 
     if (result.rowCount === 0) {
       return res.status(404).send({ message: `Food with id ${id} not found` });
     }
 
-    const deleteQuery = 'DELETE FROM foods WHERE id = $1';
+    const deleteQuery = "DELETE FROM foods WHERE id = $1";
     await pool.query(deleteQuery, [id]);
 
-    return res.status(200).send({ message: `Food with id ${id} deleted successfully` });
+    res.status(200).send("Food deleted successfully");
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error deleting food');
+    res.status(500).send("Error deleting food");
   }
 };
 
@@ -80,7 +80,7 @@ export const updateFoodById = async (req: Request, res: Response) => {
     const { name, category_id, img_url } = req.body;
 
     // Check if food exists (adjust error message)
-    const foodSql = 'SELECT * FROM foods WHERE id = $1';
+    const foodSql = "SELECT * FROM foods WHERE id = $1";
     const foodQuery = await pool.query(foodSql, [id]);
     const foodData = foodQuery.rows[0];
 
@@ -111,7 +111,7 @@ export const updateFoodById = async (req: Request, res: Response) => {
     // Success response
     res.send(updateResult);
   } catch (err) {
-    console.error('Error executing query:', err);
-    res.status(500).send('Internal Server Error');
+    console.error("Error executing query:", err);
+    res.status(500).send("Internal Server Error");
   }
 };
