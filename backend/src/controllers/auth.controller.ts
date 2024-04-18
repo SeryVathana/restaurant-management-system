@@ -1,140 +1,277 @@
 import { Request, Response } from "express";
-import { pool } from "../database";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { IRequest } from "../utils/types";
+import { ZodError, string, z } from "zod";
+import { connect } from "../configs/db";
+import { sendResponse } from "../utils/forward";
+import {
+  customerRegisterScehma,
+  customerLoginSchema,
+  adminLoginSchema,
+  adminRegisterScehma,
+} from "../validations/auth.validate";
+import { hashString } from "../utils/funtion";
+import {
+  ERROR_CODE,
+  ERROR_MESSAGE,
+  SUCCESS_CODE,
+  SUCCESS_MESSAGE,
+} from "../enums/enum";
+import { IUser } from "../interfaces/interface";
+import { createUserToken } from "../utils/token";
 
-export const createLoginSession = async (req: Request, res: Response, id: number) => {
+export const registerCustomer = async (req: Request, res: Response) => {
   try {
-    const token = jwt.sign({ userId: id }, "your-secret-key", {
-      expiresIn: "1h",
-    });
-    res.cookie("auth-token", token, {
-      httpOnly: true,
-      expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000),
-    });
+    const validatedCus = customerRegisterScehma.parse(req.body);
 
-    res.status(200).send({
-      message: "Successfully logged in",
-    });
-  } catch (err) {
-    console.error("Error executing query:", err);
-    res.status(500).send("Internal Server Error");
-  }
-};
+    const { first_name, last_name, email, phone_number, password } =
+      validatedCus;
 
-export const staffLogin = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+    const con = await connect();
+    if (!con)
+      return sendResponse(
+        res,
+        ERROR_CODE.SERVER_ERROR,
+        ERROR_MESSAGE.DB_CONNECTION
+      );
 
-  try {
-    const sql = "SELECT * FROM staffs WHERE email = $1";
-    const query = await pool.query(sql, [email]);
-    const staff = query.rows[0];
-    const isPassCorrect = staff && (await bcrypt.compare(password, staff.password));
+    const hashedPassword = hashString(password);
 
-    if (!staff || !isPassCorrect) {
-      return res.status(401).json({
-        message: "Invalid credentials",
-      });
+    await con.query(
+      `INSERT INTO customer (first_name, last_name, email, password, phone_number)
+    VALUES (?, ?, ?, ?, ?)`,
+      [first_name, last_name, email, hashedPassword, phone_number]
+    );
+
+    const [customer]: any = await con.query(
+      `SELECT * FROM customer WHERE email=?`,
+      [email]
+    );
+
+    console.log(customer);
+
+    const userObj: IUser = {
+      id: customer[0].customer_id,
+      first_name: customer[0].first_name,
+      last_name: customer[0].last_name,
+      email: customer[0].email,
+      phone_number: customer[0].phone_number,
+    };
+
+    const jwtToken = await createUserToken(userObj);
+
+    const resData = {
+      ...customer[0],
+      token: jwtToken,
+    };
+    return sendResponse(
+      res,
+      SUCCESS_CODE.OK,
+      SUCCESS_MESSAGE.REGISTERED,
+      resData
+    );
+  } catch (error: any) {
+    if (error instanceof ZodError) {
+      return sendResponse(
+        res,
+        ERROR_CODE.INVALID_INPUT,
+        error.errors[0].message
+      );
     }
 
-    await createLoginSession(req, res, staff.id);
-  } catch (err) {
-    console.error("Error executing query:", err);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-export const logout = async (req: Request, res: Response) => {
-  res.clearCookie("auth-token");
-  res.status(200).send({
-    message: "Successfully logged out",
-  });
-};
-
-export const customerRegister = async (req: Request, res: Response) => {
-  const { name, email, phone_number, password } = req.body;
-
-  try {
-    const hashedPassword = password && (await bcrypt.hash(password, process.env.BCRYPT_SALT || 10));
-
-    const sql = "INSERT INTO customers (name, email, phone_number, password) VALUES ($1, $2, $3, $4)";
-    const query = await pool.query(sql, [name, email, phone_number, hashedPassword]);
-
-    res.status(201).send({
-      message: `Customer with phone number ${phone_number} is successfully registered.`,
-    });
-  } catch (err: any) {
-    console.log(err.code);
-    if (err.code === "23505") {
-      if (err.detail.includes("email")) {
-        return res.status(409).json({
-          message: `Customer with email ${email} is already registered.`,
-        });
-      } else {
-        return res.status(409).send({
-          message: `Customer with phone number ${phone_number} is already registered.`,
-        });
-      }
+    if (error.code == "ER_DUP_ENTRY") {
+      return sendResponse(
+        res,
+        400,
+        String(error.sqlMessage).includes("email")
+          ? ERROR_MESSAGE.EMAIL_EXISTED
+          : ERROR_MESSAGE.PHONE_EXISTED
+      );
     }
 
-    console.error("Error executing query:", err);
-    res.status(500).send("Internal Server Error");
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
   }
 };
 
-export const customerLogin = async (req: Request, res: Response) => {
-  const { email_phone, password } = req.body;
-
+export const loginCustomer = async (req: Request, res: Response) => {
   try {
-    const sql = "SELECT * FROM customers WHERE email = $1 OR phone_number = $1";
-    const query = await pool.query(sql, [email_phone]);
-    const customer = query.rows[0];
-    const isPassCorrect = customer && (await bcrypt.compare(password, customer.password));
+    const validatedInput = customerLoginSchema.parse(req.body);
+    const { email_phone, password } = validatedInput;
 
-    if (!customer || !isPassCorrect) {
-      return res.status(401).json({
-        message: "Invalid credentials",
-      });
+    const con = await connect();
+    if (!con)
+      return sendResponse(
+        res,
+        ERROR_CODE.SERVER_ERROR,
+        ERROR_MESSAGE.DB_CONNECTION
+      );
+
+    const hashedPassword = hashString(password);
+    const [customer]: any = await con.query(
+      "SELECT customer_id, first_name, last_name, email, phone_number, created_at FROM customer WHERE (email=? OR phone_number=?) AND password=?",
+      [email_phone, email_phone, hashedPassword]
+    );
+
+    if (customer.length <= 0) {
+      return sendResponse(
+        res,
+        ERROR_CODE.INVALID_INPUT,
+        ERROR_MESSAGE.INCORRECT_CREDENTIAL
+      );
     }
 
-    await createLoginSession(req, res, customer.id);
-  } catch (err) {
-    console.error("Error executing query:", err);
-    res.status(500).send("Internal Server Error");
+    const userObj: IUser = {
+      id: customer[0].customer_id,
+      first_name: customer[0].first_name,
+      last_name: customer[0].last_name,
+      email: customer[0].email,
+      phone_number: customer[0].phone_number,
+    };
+
+    const jwtToken = await createUserToken(userObj);
+
+    const resData = {
+      ...customer[0],
+      token: jwtToken,
+    };
+    return sendResponse(
+      res,
+      SUCCESS_CODE.OK,
+      SUCCESS_MESSAGE.LOGGEDIN,
+      resData
+    );
+  } catch (error: any) {
+    if (error instanceof ZodError) {
+      return sendResponse(
+        res,
+        ERROR_CODE.INVALID_INPUT,
+        error.errors[0].message
+      );
+    }
+
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
   }
 };
 
-export const getNewCustomerSession = async (req: IRequest, res: Response) => {
-  const { userId } = req.session;
-
-  if (!userId) return res.status(400).send("Unauthorized.");
-
+export const registerAdmin = async (req: Request, res: Response) => {
   try {
-    const sql = "SELECT * FROM customers WHERE id = $1";
-    const query = await pool.query(sql, [userId]);
-    const customer = query.rows[0];
+    const validatedCus = adminRegisterScehma.parse(req.body);
 
-    res.status(200).send(customer);
-  } catch (err) {
-    console.error("Error executing query:", err);
-    res.status(500).send("Internal Server Error");
+    const { first_name, last_name, email, password } = validatedCus;
+
+    const con = await connect();
+    if (!con)
+      return sendResponse(
+        res,
+        ERROR_CODE.SERVER_ERROR,
+        ERROR_MESSAGE.DB_CONNECTION
+      );
+
+    const hashedPassword = hashString(password);
+
+    await con.query(
+      `INSERT INTO customer (first_name, last_name, email, password)
+    VALUES (?, ?, ?, ?)`,
+      [first_name, last_name, email, hashedPassword]
+    );
+
+    return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.REGISTERED);
+  } catch (error: any) {
+    if (error instanceof ZodError) {
+      return sendResponse(
+        res,
+        ERROR_CODE.INVALID_INPUT,
+        error.errors[0].message
+      );
+    }
+
+    if (error.code == "ER_DUP_ENTRY") {
+      return sendResponse(
+        res,
+        400,
+        String(error.sqlMessage).includes("email")
+          ? ERROR_MESSAGE.EMAIL_EXISTED
+          : ERROR_MESSAGE.PHONE_EXISTED
+      );
+    }
+
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
   }
 };
 
-export const getNewStaffSession = async (req: IRequest, res: Response) => {
-  const { userId } = req.session;
-
-  if (!userId) return res.status(400).send("Unauthorized.");
-
+export const loginAdmin = async (req: Request, res: Response) => {
   try {
-    const sql = "SELECT * FROM staffs WHERE id = $1";
-    const query = await pool.query(sql, [userId]);
-    const staff = query.rows[0];
+    const validatedInput = adminLoginSchema.parse(req.body);
+    const { email, password } = validatedInput;
 
-    res.status(200).send(staff);
-  } catch (err) {
-    console.error("Error executing query:", err);
-    res.status(500).send("Internal Server Error");
+    const con = await connect();
+    if (!con)
+      return sendResponse(
+        res,
+        ERROR_CODE.SERVER_ERROR,
+        ERROR_MESSAGE.DB_CONNECTION
+      );
+
+    const hashedPassword = hashString(password);
+    const [admin]: any = await con.query(
+      "SELECT admin_id, email, first_name, last_name, created_at FROM admin WHERE email=? AND password=?",
+      [email, hashedPassword]
+    );
+
+    if (admin.length <= 0) {
+      return sendResponse(
+        res,
+        ERROR_CODE.INVALID_INPUT,
+        ERROR_MESSAGE.INCORRECT_CREDENTIAL
+      );
+    }
+
+    const userObj: IUser = {
+      id: admin[0].admin_id,
+      first_name: admin[0].first_name,
+      last_name: admin[0].last_name,
+      email: admin[0].email,
+    };
+
+    const jwtToken = await createUserToken(userObj);
+
+    const resData = {
+      ...admin[0],
+      token: jwtToken,
+    };
+    return sendResponse(
+      res,
+      SUCCESS_CODE.OK,
+      SUCCESS_MESSAGE.LOGGEDIN,
+      resData
+    );
+  } catch (error: any) {
+    if (error instanceof ZodError) {
+      return sendResponse(
+        res,
+        ERROR_CODE.INVALID_INPUT,
+        error.errors[0].message
+      );
+    }
+
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
   }
 };

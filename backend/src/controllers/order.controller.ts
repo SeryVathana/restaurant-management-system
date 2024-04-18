@@ -1,128 +1,62 @@
 import { Request, Response } from "express";
-import { pool } from "../database";
-import { IRequest } from "../utils/types";
+import { connect } from "../configs/db";
+import { sendResponse } from "../utils/forward";
+import {
+  ERROR_CODE,
+  ERROR_MESSAGE,
+  SUCCESS_CODE,
+  SUCCESS_MESSAGE,
+} from "../enums/enum";
+import { ILoggedInRequest } from "../interfaces/interface";
+import { createOrderSchema } from "../validations/order.validate";
+import { ZodError } from "zod";
 
-export const getAllOrders = async (req: Request, res: Response) => {
-  const { order_status } = req.query;
-
+export const createOrder = async (req: ILoggedInRequest, res: Response) => {
   try {
-    let sql = "";
-    let query;
+    const validatedInput = createOrderSchema.parse(req.body);
+    const { foods, location_url } = validatedInput;
 
-    if (order_status) {
-      sql = "SELECT * FROM orders WHERE order_status = $1 ORDER BY id";
-      query = await pool.query(sql, [order_status]);
-    } else {
-      sql = "SELECT * FROM orders ORDER BY id";
-      query = await pool.query(sql);
-    }
-    const result = query.rows;
-    res.status(200).send(result);
-  } catch (err) {
-    console.error("Error executing query:", err);
-    res.status(500).send("Internal Server Error");
-  }
-};
+    if (!req.user)
+      return sendResponse(
+        res,
+        ERROR_CODE.UNAUTHORIZED,
+        ERROR_MESSAGE.UNAUTHORIZED
+      );
 
-export const getOrderById = async (req: Request, res: Response) => {
-  const { id } = req.query;
+    console.log(JSON.stringify(req.body.foods));
 
-  try {
-    const sql = "SELECT * FROM orders WHERE id = $1";
-    const query = await pool.query(sql, [id]);
-    const result = query.rows[0];
+    const { id: customer_id } = req.user;
 
-    if (!result) {
-      return res.status(404).send({ message: `Order with id ${id} not found` });
-    }
+    const jsonFood = JSON.stringify(foods);
 
-    res.status(200).send(result);
-  } catch (err) {
-    console.error("Error executing query:", err);
-    res.status(500).send("Internal Server Error");
-  }
-};
+    const con = await connect();
+    if (!con)
+      return sendResponse(
+        res,
+        ERROR_CODE.SERVER_ERROR,
+        ERROR_MESSAGE.DB_CONNECTION
+      );
 
-export const getOrderByCustomerId = async (req: Request, res: Response) => {
-  const { id } = req.query;
+    await con.query(
+      `INSERT INTO order (customer_id, foods, location_url) VALUES (?, ?, ?)`,
+      [customer_id, JSON.stringify(req.body.foods), location_url]
+    );
 
-  try {
-    const cusSql = "SELECT * FROM customers WHERE id = $1";
-    const cusQuery = await pool.query(cusSql, [id]);
-    const cusResult = cusQuery.rows[0];
-
-    if (!cusResult) {
-      return res.status(404).send({ message: `Customer with id ${id} not found` });
+    return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.CREATED);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return sendResponse(
+        res,
+        ERROR_CODE.INVALID_INPUT,
+        error.errors[0].message
+      );
     }
 
-    const sql = "SELECT * FROM orders WHERE customer_id = $1";
-    const query = await pool.query(sql, [id]);
-    const result = query.rows;
-
-    res.status(200).send(result);
-  } catch (err) {
-    console.error("Error executing query:", err);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-export const createOrder = async (req: IRequest, res: Response) => {
-  const { userId } = req.session;
-
-  if (!userId) {
-    return res.status(401).send({ message: "Unauthorized" });
-  }
-
-  const { customer_id, location, food } = req.body;
-
-  if (customer_id !== userId) {
-    return res.status(401).send({ message: "Unauthorized, wrong user id" });
-  }
-
-  try {
-    const orderSql = "INSERT INTO orders (customer_id, location) VALUES ($1, $2) RETURNING *";
-    const orderQuery = await pool.query(orderSql, [customer_id, location]);
-
-    const orderResult = orderQuery.rows[0];
-
-    const orderId = orderResult.id;
-
-    const foodResult = [];
-    for (let i = 0; i < food.length; i++) {
-      const foodSql = "INSERT INTO order_foods (order_id, food_id, quantity) VALUES ($1, $2, $3) RETURNING *";
-      const foodQuery = await pool.query(foodSql, [orderId, food[i].id, food[i].quantity]);
-      foodResult.push(foodQuery.rows[0]);
-    }
-
-    res.send({ order: orderResult, food: foodResult });
-  } catch (err) {
-    console.error("Error executing query:", err);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-export const updateOrderById = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { order_status } = req.body;
-
-  try {
-    const getSql = "SELECT * FROM orders WHERE id = $1";
-    const getQuery = await pool.query(getSql, [id]);
-    const getResult = getQuery.rows[0];
-
-    const sql = "UPDATE orders SET order_status = $1 WHERE id = $2 RETURNING *";
-    const query = await pool.query(sql, [order_status, id]);
-    const result = query.rows[0];
-
-    console.log(result);
-
-    if (!result) {
-      return res.status(404).send({ message: `Order with id ${id} not found` });
-    }
-
-    res.send(result);
-  } catch (err) {
-    console.error("Error executing query:", err);
-    res.status(500).send("Internal Server Error");
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
   }
 };

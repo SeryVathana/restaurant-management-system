@@ -1,43 +1,58 @@
-import { NextFunction, Request, RequestHandler, Response } from 'express';
-import { IRequest } from '../utils/types';
-import jwt from 'jsonwebtoken';
-import { pool } from '../database';
+import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import { ILoggedInRequest, IUser } from "../interfaces/interface";
+import { sendResponse } from "../utils/forward";
+import { ERROR_CODE, ERROR_MESSAGE } from "../enums/enum";
 
-export const checkLogin = (req: IRequest, res: Response, next: NextFunction) => {
-  const sessionId = req.cookies['auth-token'];
-
-  jwt.verify(sessionId, 'your-secret-key', (err: any, decode: any) => {
-    if (err) {
-      return res.status(401).json({
-        message: 'Unauthorized',
-      });
-    } else {
-      req.session = decode;
-    }
-  });
-
-  if (!sessionId) {
-    return res.status(401).send({ message: 'Unauthorized' });
-  }
-
-  next();
-};
-
-export const checkPermission = async (req: IRequest, res: Response, next: NextFunction) => {
-  const { userId: id } = req.session;
-
+export const verifyUserToken = async (
+  req: ILoggedInRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const sql = 'SELECT * FROM staffs WHERE id = $1';
-    const query = await pool.query(sql, [id]);
-    const staff = query.rows[0];
+    const authorization = req.headers["authorization"];
 
-    if (!staff || staff.role !== 'admin') {
-      return res.status(401).send({ message: 'Unauthorized' });
-    }
+    if (!authorization)
+      return sendResponse(
+        res,
+        ERROR_CODE.UNAUTHORIZED,
+        ERROR_MESSAGE.MISSING_AUTH_HEADER
+      );
+
+    const [type, token] = authorization.split(" ");
+
+    if (type.toLowerCase() != "bearer")
+      return sendResponse(
+        res,
+        ERROR_CODE.UNAUTHORIZED,
+        ERROR_MESSAGE.INVALID_TOKEN_TYPE
+      );
+
+    const data: any = jwt.verify(
+      token,
+      process.env.JWT_SECRET_KEY || "vathbekbek"
+    );
+
+    if (!data)
+      return sendResponse(
+        res,
+        ERROR_CODE.UNAUTHORIZED,
+        ERROR_MESSAGE.UNAUTHORIZED
+      );
+
+    const userData: IUser = {
+      id: data.id,
+      email: data.email,
+      phone_number: data.phone_number,
+      first_name: data.first_name,
+      last_name: data.last_name,
+    };
+
+    req.user = userData;
 
     next();
-  } catch (err) {
-    console.error('Error executing query: ', err);
-    res.status(500).send('Internal Server Error');
+  } catch (error) {
+    console.log(error);
+    throw new Error("error while verify user token.");
   }
 };

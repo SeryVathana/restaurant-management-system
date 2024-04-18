@@ -1,112 +1,283 @@
-import { Request, Response } from 'express';
-import { pool } from '../database';
-import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { Request, Response } from "express";
+import {
+  ERROR_CODE,
+  ERROR_MESSAGE,
+  SUCCESS_CODE,
+  SUCCESS_MESSAGE,
+} from "../enums/enum";
+import { sendResponse } from "../utils/forward";
+import { connect } from "../configs/db";
+import {
+  createStaffSchema,
+  updateStaffSchema,
+} from "../validations/staff.validate";
+import { ZodError } from "zod";
 
 export const getAllStaffs = async (req: Request, res: Response) => {
   try {
-    const sql = 'SELECT first_name, last_name, email, role, job_id, shift_id, hire_date FROM staffs order by id ASC';
-    const query = await pool.query(sql);
-    const data = query.rows;
+    const con = await connect();
+    if (!con)
+      return sendResponse(
+        res,
+        ERROR_CODE.SERVER_ERROR,
+        ERROR_MESSAGE.DB_CONNECTION
+      );
 
-    res.status(200).send(data);
-  } catch (err) {
-    console.error('Error executing query:', err);
-    res.status(500).send('Internal Server Error');
+    const [staffs]: any = await con.query(`SELECT * FROM staff`);
+
+    return sendResponse(res, SUCCESS_CODE.OK, "", staffs[0]);
+  } catch (error) {
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
   }
 };
 
 export const getStaffById = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const sql = 'SELECT id, first_name, last_name, email, role, job_id, shift_id, hire_date FROM staffs WHERE id = $1';
-    const query = await pool.query(sql, [id]);
-    const data = query.rows[0];
+  const { id } = req.params;
 
-    if (!data) {
-      return res.status(404).json({
-        message: 'Staff not found',
-      });
+  try {
+    const con = await connect();
+    if (!con)
+      return sendResponse(
+        res,
+        ERROR_CODE.SERVER_ERROR,
+        ERROR_MESSAGE.DB_CONNECTION
+      );
+
+    const [staff]: any = await con.query(
+      `SELECT * FROM staff WHERE staff_id=?`,
+      [id]
+    );
+
+    if (staff.length <= 0) {
+      return sendResponse(
+        res,
+        ERROR_CODE.NOT_FOUND,
+        ERROR_MESSAGE.STAFF_NOT_FOUND
+      );
     }
 
-    res.status(200).send(data);
-  } catch (err) {
-    console.error('Error executing query:', err);
-    res.status(500).send('Internal Server Error');
+    return sendResponse(res, SUCCESS_CODE.OK, "", staff[0]);
+  } catch (error) {
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
   }
 };
 
-export const addNewStaff = async (req: Request, res: Response) => {
+export const getStaffsByJob = async (req: Request, res: Response) => {
+  const { job_title } = req.params;
+
   try {
-    const { first_name, last_name, email, password, job_id, shift_id, salary, hire_date } = req.body;
+    const con = await connect();
+    if (!con)
+      return sendResponse(
+        res,
+        ERROR_CODE.SERVER_ERROR,
+        ERROR_MESSAGE.DB_CONNECTION
+      );
 
-    const hashedPassword = password && (await bcrypt.hash(password, process.env.BCRYPT_SALT || 10));
-    console.log(hashedPassword);
+    const [job]: any = await con.query(`SELECT * FROM job WHERE title=?`, [
+      job_title,
+    ]);
 
-    const sql =
-      'INSERT INTO staffs (first_name, last_name, email, password, role, job_id, shift_id, salary, hire_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
-    await pool.query(sql, [first_name, last_name, email, hashedPassword, 'user', job_id, shift_id, salary, hire_date]);
+    if (job.length <= 0) {
+      return sendResponse(
+        res,
+        ERROR_CODE.NOT_FOUND,
+        ERROR_MESSAGE.JOB_NOT_FOUND
+      );
+    }
 
-    res.status(201).send('Staff added successfully');
-  } catch (err) {
-    console.error('Error executing query:', err);
-    res.status(500).send('Internal Server Error');
+    const job_id = job[0].job_id;
+
+    const [staffs]: any = await con.query(
+      `SELECT * FROM staff WHERE job_id=?`,
+      [job_id]
+    );
+
+    return sendResponse(res, SUCCESS_CODE.OK, "", staffs);
+  } catch (error) {
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
+  }
+};
+
+export const createStaff = async (req: Request, res: Response) => {
+  try {
+    const validatedInput = createStaffSchema.parse(req.body);
+    const {
+      first_name,
+      last_name,
+      email,
+      phone_number,
+      job_id,
+      salary,
+      work_shift_id,
+    } = validatedInput;
+
+    const con = await connect();
+    if (!con)
+      return sendResponse(
+        res,
+        ERROR_CODE.SERVER_ERROR,
+        ERROR_MESSAGE.DB_CONNECTION
+      );
+
+    await con.query(
+      `INSERT INTO staff (first_name, last_name, email, phone_number, job_id, salary, work_shift_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        first_name,
+        last_name,
+        email,
+        phone_number,
+        job_id,
+        salary,
+        work_shift_id,
+      ]
+    );
+
+    return sendResponse(res, SUCCESS_CODE.CREATED, SUCCESS_MESSAGE.CREATED);
+  } catch (error: any) {
+    if (error instanceof ZodError) {
+      return sendResponse(
+        res,
+        ERROR_CODE.INVALID_INPUT,
+        error.errors[0].message
+      );
+    }
+
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
   }
 };
 
 export const updateStaffById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
   try {
-    const { id } = req.params;
-    const { first_name, last_name, email, job_id, shift_id, salary, hire_date } = req.body;
+    const validatedInput = updateStaffSchema.parse(req.body);
+    const {
+      first_name,
+      last_name,
+      email,
+      phone_number,
+      job_id,
+      salary,
+      work_shift_id,
+    } = validatedInput;
 
-    const staffSql = 'SELECT * FROM staffs WHERE id = $1';
-    const staffQuery = await pool.query(staffSql, [id]);
-    const staffData = staffQuery.rows[0];
+    const con = await connect();
+    if (!con)
+      return sendResponse(
+        res,
+        ERROR_CODE.SERVER_ERROR,
+        ERROR_MESSAGE.DB_CONNECTION
+      );
 
-    if (!staffData) {
-      return res.status(404).send(`Staff with id ${id} not found`);
+    const [staff]: any = await con.query(
+      `SELECT * FROM staff WHERE staff_id=?`,
+      [id]
+    );
+
+    if (staff.length <= 0) {
+      return sendResponse(
+        res,
+        ERROR_CODE.NOT_FOUND,
+        ERROR_MESSAGE.STAFF_NOT_FOUND
+      );
     }
 
-    const newData = [
-      first_name || staffData.first_name,
-      last_name || staffData.last_name,
-      email || staffData.email,
-      job_id || staffData.job_id,
-      shift_id || staffData.shift_id,
-      salary || staffData.salary,
-      hire_date || staffData.hire_date,
-    ];
+    await con.query(
+      `UPDATE staff SET
+      first_name=?
+      last_name=?
+      email=?
+      phone_number=?
+      job_id=?
+      salary=?
+      work_shift_id=?
+      WHERE staff_id=?;`,
+      [
+        first_name || staff[0].first_name,
+        last_name || staff[0].last_name,
+        email || staff[0].email,
+        phone_number || staff[0].phone_number,
+        job_id || staff[0].job_id,
+        salary || staff[0].salary,
+        work_shift_id || staff[0].work_shift_id,
+        Number(id),
+      ]
+    );
 
-    const updateSql =
-      'UPDATE staffs SET first_name=$1, last_name=$2, email=$3, job_id=$4, shift_id=$5, salary=$6, hire_date=$7 WHERE id=$8';
-    await pool.query(updateSql, [...newData, id]);
+    return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.UPDATED);
+  } catch (error: any) {
+    if (error instanceof ZodError) {
+      return sendResponse(
+        res,
+        ERROR_CODE.INVALID_INPUT,
+        error.errors[0].message
+      );
+    }
 
-    res.send('Update staff');
-  } catch (err) {
-    console.error('Error executing query:', err);
-    res.status(500).send('Internal Server Error');
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
   }
 };
 
 export const deleteStaffById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  try {
-    const sql = 'SELECT * FROM staffs WHERE id = $1';
-    const query = await pool.query(sql, [id]);
-    const staff = query.rows[0];
 
-    if (!staff) {
-      return res.status(404).send({ message: `Staff with id ${id} not found` });
+  try {
+    const con = await connect();
+    if (!con)
+      return sendResponse(
+        res,
+        ERROR_CODE.SERVER_ERROR,
+        ERROR_MESSAGE.DB_CONNECTION
+      );
+
+    const [staff]: any = await con.query(
+      `SELECT * FROM staff WHERE staff_id=?`,
+      [id]
+    );
+
+    if (staff.length <= 0) {
+      return sendResponse(
+        res,
+        ERROR_CODE.NOT_FOUND,
+        ERROR_MESSAGE.STAFF_NOT_FOUND
+      );
     }
 
-    const deleteSql = 'DELETE FROM staffs WHERE id = $1';
-    await pool.query(deleteSql, [id]);
+    await con.query(`DELETE FROM staff WHERE staff_id=?`, [id]);
 
-    res.status(200).send({ message: `Staff with id ${id} deleted` });
-  } catch (err) {
-    console.error('Error executing query:', err);
-    res.status(500).send('Internal Server Error');
+    return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.DELETED);
+  } catch (error: any) {
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
   }
 };
