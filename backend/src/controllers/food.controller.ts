@@ -14,18 +14,24 @@ import {
 import { ZodError } from "zod";
 
 export const getAllFoods = async (req: Request, res: Response) => {
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
+
   try {
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
+    const [foods]: any = await con.query(`SELECT * FROM foods`);
 
-    const [foods] = await con.query(`SELECT * FROM food`);
+    const breakfast = foods.filter((food: any) => food.category == "breakfast");
+    const lunch = foods.filter((food: any) => food.category == "lunch");
+    const dinner = foods.filter((food: any) => food.category == "dinner");
 
-    return sendResponse(res, SUCCESS_CODE.OK, "", foods);
+    const result = { breakfast, lunch, dinner };
+
+    return sendResponse(res, SUCCESS_CODE.OK, "", result);
   } catch (error) {
     console.log(error);
     return sendResponse(
@@ -33,22 +39,24 @@ export const getAllFoods = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const getFoodById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  try {
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
 
-    const [food]: any = await con.query(`SELECT * FROM food WHERE food_id=?`, [
+  try {
+    const [food]: any = await con.query(`SELECT * FROM foods WHERE food_id=?`, [
       id,
     ]);
 
@@ -68,39 +76,57 @@ export const getFoodById = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
+  }
+};
+
+export const getFoodsByTitle = async (req: Request, res: Response) => {
+  const { term } = req.params;
+
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
+
+  try {
+    const escapedTerm = `%${term.toLowerCase()}%`;
+    const [foods]: any = await con.query(
+      `SELECT * FROM foods WHERE LOWER(title) LIKE ?`,
+      [escapedTerm]
+    );
+
+    return sendResponse(res, SUCCESS_CODE.OK, "", foods);
+  } catch (error) {
+    console.log(error);
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.SERVER_ERROR
+    );
+  } finally {
+    await con.end();
   }
 };
 
 export const getFoodsByCategory = async (req: Request, res: Response) => {
-  const { category_title } = req.params;
+  const { category } = req.params;
 
-  try {
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
-    const [category]: any = await con.query(
-      `SELECT * FROM food_category WHERE title=?`,
-      [category_title]
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
     );
 
-    if (category.length <= 0) {
-      return sendResponse(
-        res,
-        ERROR_CODE.NOT_FOUND,
-        ERROR_MESSAGE.CATEGORY_NOT_FOUND
-      );
-    }
-
-    const cat_id = category[0].category_id;
-
+  try {
     const [food]: any = await con.query(
-      `SELECT * FROM food WHERE category_id=?`,
-      [cat_id]
+      `SELECT * FROM foods WHERE category=?`,
+      [category]
     );
 
     return sendResponse(res, SUCCESS_CODE.OK, "", food);
@@ -111,25 +137,27 @@ export const getFoodsByCategory = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const createFood = async (req: Request, res: Response) => {
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
+
   try {
     const validatedInput = createFoodSchema.parse(req.body);
-    const { title, description, category_id } = validatedInput;
-
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
+    const { title, description, category } = validatedInput;
 
     await con.query(
-      `INSERT INTO food (title, description, category_id) VALUES (?, ?, ?)`,
-      [title, description, category_id]
+      `INSERT INTO foods (title, description, category) VALUES (?, ?, ?)`,
+      [title, description, category]
     );
 
     return sendResponse(res, SUCCESS_CODE.CREATED, SUCCESS_MESSAGE.CREATED);
@@ -148,25 +176,27 @@ export const createFood = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const updateFoodById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
+
   try {
     const validatedInput = updateFoodSchema.parse(req.body);
-    const { title, description, category_id } = validatedInput;
+    const { title, description, category } = validatedInput;
 
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
-    const [food]: any = await con.query(`SELECT * FROM food WHERE food_id=?`, [
+    const [food]: any = await con.query(`SELECT * FROM foods WHERE food_id=?`, [
       id,
     ]);
 
@@ -179,15 +209,15 @@ export const updateFoodById = async (req: Request, res: Response) => {
     }
 
     await con.query(
-      `UPDATE food SET
+      `UPDATE foods SET
     title=?,
     description=?,
-    category_id=?
+    category=?
     WHERE food_id=?;`,
       [
         title || food[0].title,
         description || food[0].description,
-        category_id || food[0].category_id,
+        category || food[0].category,
         Number(id),
       ]
     );
@@ -208,22 +238,23 @@ export const updateFoodById = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const deleteFoodById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
   try {
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
-    const [food]: any = await con.query(`SELECT * FROM food WHERE food_id=?`, [
+    const [food]: any = await con.query(`SELECT * FROM foods WHERE food_id=?`, [
       id,
     ]);
 
@@ -235,7 +266,7 @@ export const deleteFoodById = async (req: Request, res: Response) => {
       );
     }
 
-    await con.query(`DELETE FROM food WHERE food_id=?`, [id]);
+    await con.query(`DELETE FROM foods WHERE food_id=?`, [id]);
 
     return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.DELETED);
   } catch (error: any) {
@@ -245,5 +276,7 @@ export const deleteFoodById = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };

@@ -9,11 +9,9 @@ export const createStaffSchema = z.object({
     .trim(),
   email: string().email(),
   phone_number: string().min(6, "invalid phone number"),
-  job_id: number({ invalid_type_error: "job id must be integer" }).min(1),
+  job: number({ invalid_type_error: "job id must be integer" }).min(1),
   salary: number({ invalid_type_error: "job id must be integer" }).min(0),
-  work_shift_id: number({ invalid_type_error: "job id must be integer" }).min(
-    1
-  ),
+  work_shift: string(),
 });
 
 export const updateStaffSchema = createStaffSchema.partial(); // Allow updating only some fields

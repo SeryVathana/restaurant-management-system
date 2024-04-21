@@ -14,16 +14,15 @@ import {
 import { ZodError } from "zod";
 
 export const getAllStaffs = async (req: Request, res: Response) => {
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
   try {
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
-    const [staffs]: any = await con.query(`SELECT * FROM staff`);
+    const [staffs]: any = await con.query(`SELECT * FROM staffs`);
 
     return sendResponse(res, SUCCESS_CODE.OK, "", staffs[0]);
   } catch (error) {
@@ -33,23 +32,25 @@ export const getAllStaffs = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const getStaffById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  try {
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
 
+  try {
     const [staff]: any = await con.query(
-      `SELECT * FROM staff WHERE staff_id=?`,
+      `SELECT * FROM staffs WHERE staff_id=?`,
       [id]
     );
 
@@ -69,39 +70,26 @@ export const getStaffById = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const getStaffsByJob = async (req: Request, res: Response) => {
-  const { job_title } = req.params;
+  const { job } = req.params;
+
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
 
   try {
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
-    const [job]: any = await con.query(`SELECT * FROM job WHERE title=?`, [
-      job_title,
+    const [staffs]: any = await con.query(`SELECT * FROM staffs WHERE job=?`, [
+      job,
     ]);
-
-    if (job.length <= 0) {
-      return sendResponse(
-        res,
-        ERROR_CODE.NOT_FOUND,
-        ERROR_MESSAGE.JOB_NOT_FOUND
-      );
-    }
-
-    const job_id = job[0].job_id;
-
-    const [staffs]: any = await con.query(
-      `SELECT * FROM staff WHERE job_id=?`,
-      [job_id]
-    );
 
     return sendResponse(res, SUCCESS_CODE.OK, "", staffs);
   } catch (error) {
@@ -111,10 +99,20 @@ export const getStaffsByJob = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const createStaff = async (req: Request, res: Response) => {
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
+
   try {
     const validatedInput = createStaffSchema.parse(req.body);
     const {
@@ -122,30 +120,14 @@ export const createStaff = async (req: Request, res: Response) => {
       last_name,
       email,
       phone_number,
-      job_id,
+      job,
       salary,
-      work_shift_id,
+      work_shift,
     } = validatedInput;
 
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
     await con.query(
-      `INSERT INTO staff (first_name, last_name, email, phone_number, job_id, salary, work_shift_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [
-        first_name,
-        last_name,
-        email,
-        phone_number,
-        job_id,
-        salary,
-        work_shift_id,
-      ]
+      `INSERT INTO staffs (first_name, last_name, email, phone_number, job, salary, work_shift_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [first_name, last_name, email, phone_number, job, salary, work_shift]
     );
 
     return sendResponse(res, SUCCESS_CODE.CREATED, SUCCESS_MESSAGE.CREATED);
@@ -164,11 +146,21 @@ export const createStaff = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const updateStaffById = async (req: Request, res: Response) => {
   const { id } = req.params;
+
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
 
   try {
     const validatedInput = updateStaffSchema.parse(req.body);
@@ -177,21 +169,13 @@ export const updateStaffById = async (req: Request, res: Response) => {
       last_name,
       email,
       phone_number,
-      job_id,
+      job,
       salary,
-      work_shift_id,
+      work_shift,
     } = validatedInput;
 
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
     const [staff]: any = await con.query(
-      `SELECT * FROM staff WHERE staff_id=?`,
+      `SELECT * FROM staffs WHERE staff_id=?`,
       [id]
     );
 
@@ -204,23 +188,23 @@ export const updateStaffById = async (req: Request, res: Response) => {
     }
 
     await con.query(
-      `UPDATE staff SET
+      `UPDATE staffs SET
       first_name=?
       last_name=?
       email=?
       phone_number=?
-      job_id=?
+      job=?
       salary=?
-      work_shift_id=?
+      work_shift=?
       WHERE staff_id=?;`,
       [
         first_name || staff[0].first_name,
         last_name || staff[0].last_name,
         email || staff[0].email,
         phone_number || staff[0].phone_number,
-        job_id || staff[0].job_id,
+        job || staff[0].job,
         salary || staff[0].salary,
-        work_shift_id || staff[0].work_shift_id,
+        work_shift || staff[0].work_shift,
         Number(id),
       ]
     );
@@ -241,23 +225,24 @@ export const updateStaffById = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const deleteStaffById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
   try {
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
     const [staff]: any = await con.query(
-      `SELECT * FROM staff WHERE staff_id=?`,
+      `SELECT * FROM staffs WHERE staff_id=?`,
       [id]
     );
 
@@ -269,7 +254,7 @@ export const deleteStaffById = async (req: Request, res: Response) => {
       );
     }
 
-    await con.query(`DELETE FROM staff WHERE staff_id=?`, [id]);
+    await con.query(`DELETE FROM staffs WHERE staff_id=?`, [id]);
 
     return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.DELETED);
   } catch (error: any) {
@@ -279,5 +264,7 @@ export const deleteStaffById = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };

@@ -32,25 +32,13 @@ export const AuthContextProvider = ({ children }: { children: any }) => {
     setUser({ id: "1", email: "yooseryvathana@gmail.com", name: "Vathana" });
   }, []);
 
-  return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const UserAuth = () => {
   return useContext(UserContext);
-};
-
-// Login and logout functions (replace with your implementation)
-export const login = async (/* credentials */) => {
-  // try {
-  //   const response = await fetch(/* API endpoint for login */);
-  //   const data = await response.json();
-  //   setUser(data.user); // Update user state on successful login
-  // } catch (error) {
-  //   console.error("Error logging in:", error);
-  //   // Handle errors (e.g., display error message)
-  // }
-};
-
-export const logout = () => {
-  // setUser(null); // Clear user state on logout
 };

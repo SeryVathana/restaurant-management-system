@@ -12,6 +12,14 @@ import { createOrderSchema } from "../validations/order.validate";
 import { ZodError } from "zod";
 
 export const createOrder = async (req: ILoggedInRequest, res: Response) => {
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
+
   try {
     const validatedInput = createOrderSchema.parse(req.body);
     const { foods, location_url } = validatedInput;
@@ -29,16 +37,8 @@ export const createOrder = async (req: ILoggedInRequest, res: Response) => {
 
     const jsonFood = JSON.stringify(foods);
 
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
     await con.query(
-      `INSERT INTO order (customer_id, foods, location_url) VALUES (?, ?, ?)`,
+      `INSERT INTO orders (customer_id, foods, location_url) VALUES (?, ?, ?)`,
       [customer_id, JSON.stringify(req.body.foods), location_url]
     );
 
@@ -58,5 +58,7 @@ export const createOrder = async (req: ILoggedInRequest, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };

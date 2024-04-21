@@ -1,17 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { UserAuth } from "@/contexts/AuthContext";
 
 const LoginPage = () => {
+  const { user, setUser } = UserAuth();
+
   return (
-    <div className="flex flex-wrap">
+    <div className="flex flex-wrap items-center relative">
+      <div className="absolute top-10 left-10">
+        <Link to={"/"} className="text-2xl px-0 text-primary">
+          Fooddie
+        </Link>
+      </div>
       <div className="w-full sm:w-6/12 mb-10">
-        <div className="container mx-auto h-full sm:p-10">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="flex justify-center text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">Log In</h1>
+        <div className="container mx-auto h-full">
+          <div className="space-y-4">
+            <h1 className="flex justify-center text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              Log In
+            </h1>
             <form className="space-y-4 md:space-y-6" action="#">
               <div>
-                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Your email
+                <label
+                  htmlFor="email"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Email
                 </label>
                 <input
                   type="email"
@@ -23,7 +36,10 @@ const LoginPage = () => {
                 />
               </div>
               <div>
-                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <label
+                  htmlFor="password"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
                   Password
                 </label>
                 <input
@@ -47,24 +63,33 @@ const LoginPage = () => {
                     />
                   </div>
                   <div className="ml-3 text-sm">
-                    <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">
+                    <label
+                      htmlFor="remember"
+                      className="text-gray-500 dark:text-gray-300"
+                    >
                       Remember me
                     </label>
                   </div>
                 </div>
-                <a href="#" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">
+                <a
+                  href="#"
+                  className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
+                >
                   Forgot password?
                 </a>
               </div>
               <Button
                 type="submit"
-                className="w-full font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className="w-full font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Sign in
               </Button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
-                <Link to="/register" className="font-medium text-primary-600 hover:underline dark:text-primary-500">
+                <Link
+                  to="/register"
+                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                >
                   Sign up
                 </Link>
               </p>

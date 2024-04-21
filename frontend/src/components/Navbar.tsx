@@ -18,7 +18,7 @@ const Navbar = () => {
           Fooddie
         </Link>
 
-        <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12 items-center">
+        <ul className="hidden md:flex px-4 mx-auto font-heading space-x-12 items-center">
           <li>
             <Link className="hover:underline" to="/menu">
               Menus
@@ -31,22 +31,23 @@ const Navbar = () => {
           </li>
           <li>
             <Link to="/order">
-              <Button className="rounded-full" variant={"outline"}>
-                Order Now
-              </Button>
+              <Button className="rounded-full bg-primary">Order Now</Button>
             </Link>
           </li>
         </ul>
         <div className="flex gap-5 items-center">
           <Link to="/login">
-            <Button className="ml-auto flex items-center space-x-2  gap-2">
-              <User className="w-5 h-5" />
+            <Button
+              className="ml-auto flex items-center space-x-2 gap-2 rounded-full px-5"
+              variant={"outline"}
+            >
+              {/* <User className="w-5 h-5" /> */}
               Log In
             </Button>
           </Link>
           <Link to="/register">
-            <Button className="ml-auto flex items-center space-x-2 gap-2" variant={"secondary"}>
-              <User className="w-5 h-5" />
+            <Button className="ml-auto flex items-center space-x-2 gap-2 rounded-full px-5">
+              {/* <User className="w-5 h-5" /> */}
               Register
             </Button>
           </Link>

@@ -19,30 +19,30 @@ import { IUser } from "../interfaces/interface";
 import { createUserToken } from "../utils/token";
 
 export const registerCustomer = async (req: Request, res: Response) => {
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
+
   try {
     const validatedCus = customerRegisterScehma.parse(req.body);
 
     const { first_name, last_name, email, phone_number, password } =
       validatedCus;
 
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
     const hashedPassword = hashString(password);
 
     await con.query(
-      `INSERT INTO customer (first_name, last_name, email, password, phone_number)
+      `INSERT INTO customers (first_name, last_name, email, password, phone_number)
     VALUES (?, ?, ?, ?, ?)`,
       [first_name, last_name, email, hashedPassword, phone_number]
     );
 
     const [customer]: any = await con.query(
-      `SELECT * FROM customer WHERE email=?`,
+      `SELECT * FROM customers WHERE email=?`,
       [email]
     );
 
@@ -93,25 +93,27 @@ export const registerCustomer = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const loginCustomer = async (req: Request, res: Response) => {
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
+
   try {
     const validatedInput = customerLoginSchema.parse(req.body);
     const { email_phone, password } = validatedInput;
 
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
     const hashedPassword = hashString(password);
     const [customer]: any = await con.query(
-      "SELECT customer_id, first_name, last_name, email, phone_number, created_at FROM customer WHERE (email=? OR phone_number=?) AND password=?",
+      "SELECT customer_id, first_name, last_name, email, phone_number, created_at FROM customers WHERE (email=? OR phone_number=?) AND password=?",
       [email_phone, email_phone, hashedPassword]
     );
 
@@ -158,27 +160,29 @@ export const loginCustomer = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const registerAdmin = async (req: Request, res: Response) => {
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
+
   try {
     const validatedCus = adminRegisterScehma.parse(req.body);
 
     const { first_name, last_name, email, password } = validatedCus;
 
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
     const hashedPassword = hashString(password);
 
     await con.query(
-      `INSERT INTO customer (first_name, last_name, email, password)
+      `INSERT INTO customers (first_name, last_name, email, password)
     VALUES (?, ?, ?, ?)`,
       [first_name, last_name, email, hashedPassword]
     );
@@ -209,25 +213,27 @@ export const registerAdmin = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
 
 export const loginAdmin = async (req: Request, res: Response) => {
+  const con = await connect();
+  if (!con)
+    return sendResponse(
+      res,
+      ERROR_CODE.SERVER_ERROR,
+      ERROR_MESSAGE.DB_CONNECTION
+    );
+
   try {
     const validatedInput = adminLoginSchema.parse(req.body);
     const { email, password } = validatedInput;
 
-    const con = await connect();
-    if (!con)
-      return sendResponse(
-        res,
-        ERROR_CODE.SERVER_ERROR,
-        ERROR_MESSAGE.DB_CONNECTION
-      );
-
     const hashedPassword = hashString(password);
     const [admin]: any = await con.query(
-      "SELECT admin_id, email, first_name, last_name, created_at FROM admin WHERE email=? AND password=?",
+      "SELECT admin_id, email, first_name, last_name, created_at FROM admins WHERE email=? AND password=?",
       [email, hashedPassword]
     );
 
@@ -273,5 +279,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
       ERROR_CODE.SERVER_ERROR,
       ERROR_MESSAGE.SERVER_ERROR
     );
+  } finally {
+    await con.end();
   }
 };
