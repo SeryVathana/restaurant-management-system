@@ -1,282 +1,139 @@
 import { Request, Response } from "express";
-import { connect } from "../configs/db";
 import { sendResponse } from "../utils/forward";
-import {
-  ERROR_CODE,
-  ERROR_MESSAGE,
-  SUCCESS_CODE,
-  SUCCESS_MESSAGE,
-} from "../enums/enum";
-import {
-  createFoodSchema,
-  updateFoodSchema,
-} from "../validations/food.validate";
+import { ERROR_CODE, ERROR_MESSAGE, SUCCESS_CODE, SUCCESS_MESSAGE } from "../enums/enum";
+import { createFoodSchema, updateFoodSchema } from "../validations/food.validate";
 import { ZodError } from "zod";
+import { FoodModel } from "../models/food.model";
+import { IfAny, ObjectId, isObjectIdOrHexString } from "mongoose";
+import { IFood } from "../interfaces/interface";
+import { match } from "assert";
 
 export const getAllFoods = async (req: Request, res: Response) => {
-  const con = await connect();
-  if (!con)
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.DB_CONNECTION
-    );
-
   try {
-    const [foods]: any = await con.query(`SELECT * FROM foods`);
+    const foods: IFood[] = await FoodModel.find({});
 
-    const breakfast = foods.filter((food: any) => food.category == "breakfast");
-    const lunch = foods.filter((food: any) => food.category == "lunch");
-    const dinner = foods.filter((food: any) => food.category == "dinner");
+    const breakfast = foods.filter((food) => food.categories.includes("breakfast"));
+    const lunch = foods.filter((food) => food.categories.includes("lunch"));
+    const dinner = foods.filter((food) => food.categories.includes("dinner"));
 
     const result = { breakfast, lunch, dinner };
 
     return sendResponse(res, SUCCESS_CODE.OK, "", result);
   } catch (error) {
     console.log(error);
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.SERVER_ERROR
-    );
-  } finally {
-    await con.end();
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
   }
 };
 
 export const getFoodById = async (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  const con = await connect();
-  if (!con)
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.DB_CONNECTION
-    );
-
   try {
-    const [food]: any = await con.query(`SELECT * FROM foods WHERE food_id=?`, [
-      id,
-    ]);
+    const { id } = req.params;
 
-    if (food.length <= 0) {
-      return sendResponse(
-        res,
-        ERROR_CODE.NOT_FOUND,
-        ERROR_MESSAGE.FOOD_NOT_FOUND
-      );
-    }
+    const isObjId = isObjectIdOrHexString(id);
+    if (!isObjId) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.FOOD_NOT_FOUND);
 
-    return sendResponse(res, SUCCESS_CODE.OK, "", food[0]);
+    const food = await FoodModel.findById(id);
+    if (!food) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.FOOD_NOT_FOUND);
+
+    return sendResponse(res, SUCCESS_CODE.OK, "", food);
   } catch (error) {
     console.log(error);
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.SERVER_ERROR
-    );
-  } finally {
-    await con.end();
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
   }
 };
 
 export const getFoodsByTitle = async (req: Request, res: Response) => {
   const { term } = req.params;
 
-  const con = await connect();
-  if (!con)
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.DB_CONNECTION
-    );
-
   try {
-    const escapedTerm = `%${term.toLowerCase()}%`;
-    const [foods]: any = await con.query(
-      `SELECT * FROM foods WHERE LOWER(title) LIKE ?`,
-      [escapedTerm]
-    );
-
+    const foods = await FoodModel.find({ title: { $regex: term.toLowerCase(), $options: "i" } });
     return sendResponse(res, SUCCESS_CODE.OK, "", foods);
   } catch (error) {
     console.log(error);
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.SERVER_ERROR
-    );
-  } finally {
-    await con.end();
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
   }
 };
 
 export const getFoodsByCategory = async (req: Request, res: Response) => {
   const { category } = req.params;
-
-  const con = await connect();
-  if (!con)
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.DB_CONNECTION
-    );
-
   try {
-    const [food]: any = await con.query(
-      `SELECT * FROM foods WHERE category=?`,
-      [category]
-    );
+    const foods = await FoodModel.find({ categories: category });
 
-    return sendResponse(res, SUCCESS_CODE.OK, "", food);
+    return sendResponse(res, SUCCESS_CODE.OK, "", foods);
   } catch (error) {
     console.log(error);
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.SERVER_ERROR
-    );
-  } finally {
-    await con.end();
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
   }
 };
 
 export const createFood = async (req: Request, res: Response) => {
-  const con = await connect();
-  if (!con)
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.DB_CONNECTION
-    );
-
   try {
     const validatedInput = createFoodSchema.parse(req.body);
-    const { title, description, category } = validatedInput;
 
-    await con.query(
-      `INSERT INTO foods (title, description, category) VALUES (?, ?, ?)`,
-      [title, description, category]
-    );
+    if (validatedInput.price < 0) {
+      return sendResponse(res, ERROR_CODE.INVALID_INPUT, ERROR_MESSAGE.INVALID_INPUT);
+    }
+
+    await FoodModel.create(validatedInput);
 
     return sendResponse(res, SUCCESS_CODE.CREATED, SUCCESS_MESSAGE.CREATED);
   } catch (error: any) {
     if (error instanceof ZodError) {
-      return sendResponse(
-        res,
-        ERROR_CODE.INVALID_INPUT,
-        error.errors[0].message
-      );
+      console.log(error);
+      return sendResponse(res, ERROR_CODE.INVALID_INPUT, ERROR_MESSAGE.INVALID_INPUT);
     }
 
     console.log(error);
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.SERVER_ERROR
-    );
-  } finally {
-    await con.end();
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
   }
 };
 
 export const updateFoodById = async (req: Request, res: Response) => {
   const { id } = req.params;
-
-  const con = await connect();
-  if (!con)
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.DB_CONNECTION
-    );
-
   try {
+    const isObjId = isObjectIdOrHexString(id);
+    if (!isObjId) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.FOOD_NOT_FOUND);
+
     const validatedInput = updateFoodSchema.parse(req.body);
-    const { title, description, category } = validatedInput;
+    const { title, description, img_url, price, categories } = validatedInput;
 
-    const [food]: any = await con.query(`SELECT * FROM foods WHERE food_id=?`, [
-      id,
-    ]);
+    const food = await FoodModel.findById(id);
+    if (!food) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.FOOD_NOT_FOUND);
 
-    if (food.length <= 0) {
-      return sendResponse(
-        res,
-        ERROR_CODE.NOT_FOUND,
-        ERROR_MESSAGE.FOOD_NOT_FOUND
-      );
-    }
+    food.title = title || food.title;
+    food.description = description || food.description;
+    food.img_url = img_url || food.img_url;
+    food.price = price || food.price;
+    food.categories = categories || food.categories;
 
-    await con.query(
-      `UPDATE foods SET
-    title=?,
-    description=?,
-    category=?
-    WHERE food_id=?;`,
-      [
-        title || food[0].title,
-        description || food[0].description,
-        category || food[0].category,
-        Number(id),
-      ]
-    );
+    await food.save();
 
     return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.UPDATED);
   } catch (error: any) {
     if (error instanceof ZodError) {
-      return sendResponse(
-        res,
-        ERROR_CODE.INVALID_INPUT,
-        error.errors[0].message
-      );
+      return sendResponse(res, ERROR_CODE.INVALID_INPUT, error.errors[0].message);
     }
 
     console.log(error);
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.SERVER_ERROR
-    );
-  } finally {
-    await con.end();
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
   }
 };
 
 export const deleteFoodById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const con = await connect();
-  if (!con)
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.DB_CONNECTION
-    );
   try {
-    const [food]: any = await con.query(`SELECT * FROM foods WHERE food_id=?`, [
-      id,
-    ]);
+    const isObjId = isObjectIdOrHexString(id);
+    if (!isObjId) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.FOOD_NOT_FOUND);
 
-    if (food.length <= 0) {
-      return sendResponse(
-        res,
-        ERROR_CODE.NOT_FOUND,
-        ERROR_MESSAGE.FOOD_NOT_FOUND
-      );
-    }
+    const food = await FoodModel.findById(id);
+    if (!food) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.FOOD_NOT_FOUND);
 
-    await con.query(`DELETE FROM foods WHERE food_id=?`, [id]);
+    await food.deleteOne();
 
     return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.DELETED);
   } catch (error: any) {
     console.log(error);
-    return sendResponse(
-      res,
-      ERROR_CODE.SERVER_ERROR,
-      ERROR_MESSAGE.SERVER_ERROR
-    );
-  } finally {
-    await con.end();
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
   }
 };

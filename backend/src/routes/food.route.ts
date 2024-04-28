@@ -1,12 +1,12 @@
 import express from "express";
 import {
-  getFoodById,
-  getAllFoods,
-  getFoodsByCategory,
-  updateFoodById,
-  deleteFoodById,
   createFood,
+  deleteFoodById,
+  getAllFoods,
+  getFoodById,
+  getFoodsByCategory,
   getFoodsByTitle,
+  updateFoodById,
 } from "../controllers/food.controller";
 
 const foodRouter = express.Router();

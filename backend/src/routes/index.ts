@@ -1,9 +1,8 @@
 import { Router } from "express";
-
+import foodRouter from "./food.route";
 import authRouter from "./auth.route";
 import staffRouter from "./staff.route";
 import orderRouter from "./order.route";
-import foodRouter from "./food.route";
 
 const routes = Router();
 
