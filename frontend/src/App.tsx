@@ -1,23 +1,27 @@
 import MainLayout from "./Layouts/MainLayout";
 import Homepage from "./Pages/HomePage";
 
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
 import MenuPage from "./Pages/MenuPage";
 import OrderPage from "./Pages/OrderPage";
 import LoginPage from "./Pages/LoginPage";
-import AuthLayout from "./Layouts/AuthLayout";
+import ProtectedLayout from "./Layouts/ProtectedLayout";
 import RegisterPage from "./Pages/RegisterPage";
-import { AuthContextProvider } from "./contexts/AuthContext";
+import { store } from "./redux/store";
+import { Provider } from "react-redux";
 import NonComLayout from "./Layouts/NonComLayout";
+import { getToken } from "./utils/HelperFunctions";
+import { fetchUserData } from "./redux/slice/authThunk";
+import { persistStore } from "redux-persist";
+import { PersistGate } from "redux-persist/integration/react";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<NonComLayout />}>
+    <Route path="/">
+      <Route element={<NonComLayout />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Route>
       <Route element={<MainLayout />}>
         <Route index element={<Homepage />} />
         <Route path="/menu" element={<MenuPage />} />
@@ -25,23 +29,28 @@ const router = createBrowserRouter(
         <Route
           path="/order"
           element={
-            <AuthLayout>
+            <ProtectedLayout>
               <OrderPage />
-            </AuthLayout>
+            </ProtectedLayout>
           }
         />
       </Route>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
     </Route>
   )
 );
 
+let persistor = persistStore(store);
+
 function App() {
+  if (getToken()) {
+    store.dispatch(fetchUserData());
+  }
   return (
-    <AuthContextProvider>
-      <RouterProvider router={router} />
-    </AuthContextProvider>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <RouterProvider router={router} />
+      </PersistGate>
+    </Provider>
   );
 }
 

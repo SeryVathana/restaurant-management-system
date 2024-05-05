@@ -1,9 +1,29 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { UserAuth } from "@/contexts/AuthContext";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { login } from "@/redux/slice/authThunk";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { RootState } from "@/redux/store";
 
 const LoginPage = () => {
-  const { user, setUser } = UserAuth();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const auth = useAppSelector((state: RootState) => state.auth);
+
+  if (auth.token) {
+    navigate("/");
+  }
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const handleUserLogin = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    dispatch(login({ email_phone: email, password }));
+  };
 
   return (
     <div className="flex flex-wrap items-center relative">
@@ -15,81 +35,60 @@ const LoginPage = () => {
       <div className="w-full sm:w-6/12 mb-10">
         <div className="container mx-auto h-full">
           <div className="space-y-4">
-            <h1 className="flex justify-center text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Log In
-            </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <h1 className="flex justify-center text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">Log In</h1>
+            <form className="space-y-4 md:space-y-6">
               <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Email
                 </label>
-                <input
+                <Input
                   type="email"
                   name="email"
                   id="email"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="name@company.com"
                   required={true}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
+                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Password
                 </label>
-                <input
+                <Input
                   type="password"
                   name="password"
                   id="password"
                   placeholder="Password"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   required={true}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-start">
                   <div className="flex items-center h-5">
-                    <input
-                      id="remember"
-                      aria-describedby="remember"
-                      type="checkbox"
-                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                      required={true}
-                    />
+                    <Checkbox id="remember" />
                   </div>
                   <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="remember"
-                      className="text-gray-500 dark:text-gray-300"
-                    >
+                    <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">
                       Remember me
                     </label>
                   </div>
                 </div>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
+                <a href="#" className="text-sm font-medium text-primary hover:underline dark:text-primary-500">
                   Forgot password?
                 </a>
               </div>
               <Button
-                type="submit"
-                className="w-full font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                onClick={(e) => handleUserLogin(e)}
+                className="w-full font-medium rounded-none text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Sign in
               </Button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
-                <Link
-                  to="/register"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
+                <Link to="/register" className="font-medium text-primary-600 hover:underline dark:text-primary-500">
                   Sign up
                 </Link>
               </p>

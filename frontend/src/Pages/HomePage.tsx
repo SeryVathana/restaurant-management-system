@@ -7,7 +7,7 @@ const Homepage = () => {
   return (
     <>
       <section className="relative mx-auto">
-        <div className="mx-4 py-20 lg:flex">
+        <div className="py-20 lg:flex">
           <div className="text-center lg:text-left lg:w-1/2">
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold leading-none">Main title of your landing page</h1>
             <p className="text-xl lg:text-2xl mt-6 font-light">
@@ -21,8 +21,8 @@ const Homepage = () => {
         </div>
       </section>
 
-      <div className="mx-4 py-4 lg:flex">
-        <div className="flex justify-start mx-4 lg:w-1/2">
+      <div className="py-4 lg:flex">
+        <div className="flex justify-start lg:w-1/2">
           <div className="grid grid-cols-4 gap-4">
             <div className="col-span-2">
               <img src="https://i.pinimg.com/564x/81/8f/13/818f139c8adae48b010d9e5202348289.jpg" alt="Stand Image" className="w-full h-auto" />
@@ -54,7 +54,7 @@ const Homepage = () => {
           <h3 className="text-center font-sans font-bold text-3xl">Our Services</h3>
         </div>
         <div className="flex justify-between items-center">
-          <Button className="w-60 h-fit" variant={"ghost"} onClick={() => navigate("/menu#breakfast")}>
+          <Button className="w-60 h-fit m-0" variant={"ghost"} onClick={() => navigate("/menu#breakfast")}>
             <div className="flex flex-col items-center  my-5  gap-2">
               <EggFried />
               <p className="text-black font-sans font-bold text-2xl text-center">Breakfast</p>

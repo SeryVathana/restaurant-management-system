@@ -49,6 +49,7 @@ export const registerCustomer = async (req: Request, res: Response) => {
 };
 
 export const loginCustomer = async (req: Request, res: Response) => {
+  console.log(req.body);
   try {
     const validatedInput = customerLoginSchema.parse(req.body);
     const { email_phone, password } = validatedInput;
@@ -70,8 +71,8 @@ export const loginCustomer = async (req: Request, res: Response) => {
     const jwtToken = await createUserToken(userObj);
 
     const resData = {
-      ...userObj,
-      jwt_token: jwtToken,
+      user: userObj,
+      token: jwtToken,
     };
     return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.LOGGEDIN, resData);
   } catch (error: any) {
