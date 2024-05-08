@@ -31,12 +31,10 @@ const staffSchema = new Schema(
       type: Number,
       required: true,
     },
-    work_shifts: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
+    work_shift: {
+      type: String,
+      required: true,
+    },
     hire_date: {
       type: Date,
       default: new Date(),

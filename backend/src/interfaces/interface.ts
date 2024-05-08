@@ -39,7 +39,7 @@ export interface IStaff {
   phone_number: string;
   job_title: string;
   salary: number;
-  work_shifts: string[];
+  work_shift: string;
   hire_date: string;
   createdAt: string;
   updatedAt: string;

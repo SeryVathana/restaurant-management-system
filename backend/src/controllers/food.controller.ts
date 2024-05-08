@@ -9,16 +9,20 @@ import { IFood } from "../interfaces/interface";
 import { match } from "assert";
 
 export const getAllFoods = async (req: Request, res: Response) => {
+  const { sorted } = req.query;
   try {
     const foods: IFood[] = await FoodModel.find({});
 
-    const breakfast = foods.filter((food) => food.categories.includes("breakfast"));
-    const lunch = foods.filter((food) => food.categories.includes("lunch"));
-    const dinner = foods.filter((food) => food.categories.includes("dinner"));
+    let result: any;
+    if (sorted == "true") {
+      const breakfast = foods.filter((food) => food.categories.includes("breakfast"));
+      const lunch = foods.filter((food) => food.categories.includes("lunch"));
+      const dinner = foods.filter((food) => food.categories.includes("dinner"));
 
-    const result = { breakfast, lunch, dinner };
+      result = { breakfast, lunch, dinner };
+    }
 
-    return sendResponse(res, SUCCESS_CODE.OK, "", result);
+    return sendResponse(res, SUCCESS_CODE.OK, "", sorted == "true" ? result : foods);
   } catch (error) {
     console.log(error);
     return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);

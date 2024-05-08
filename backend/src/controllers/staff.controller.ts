@@ -13,9 +13,9 @@ export const getAllStaffs = async (req: Request, res: Response) => {
     let staffs: IStaff[] = [];
 
     if (work_shift && job_title) {
-      staffs = await StaffModel.find({ work_shifts: work_shift, job_title });
+      staffs = await StaffModel.find({ work_shift: work_shift, job_title });
     } else if (work_shift) {
-      staffs = await StaffModel.find({ work_shifts: work_shift });
+      staffs = await StaffModel.find({ work_shift: work_shift });
     } else if (job_title) {
       staffs = await StaffModel.find({ job_title });
     } else {
@@ -38,6 +38,25 @@ export const getStaffById = async (req: Request, res: Response) => {
     if (!staff) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.STAFF_NOT_FOUND);
 
     return sendResponse(res, SUCCESS_CODE.OK, "", staff);
+  } catch (error) {
+    console.log(error);
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
+  }
+};
+
+export const searchStaffs = async (req: Request, res: Response) => {
+  const { query } = req.query;
+
+  try {
+    const staffs = await StaffModel.find({
+      $or: [
+        { email: { $regex: query, $options: "i" } },
+        { first_name: { $regex: query, $options: "i" } },
+        { last_name: { $regex: query, $options: "i" } },
+      ],
+    });
+
+    return sendResponse(res, SUCCESS_CODE.OK, "", staffs);
   } catch (error) {
     console.log(error);
     return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
@@ -78,7 +97,7 @@ export const updateStaffById = async (req: Request, res: Response) => {
     if (!isObjId) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.FOOD_NOT_FOUND);
 
     const validatedInput = updateStaffSchema.parse(req.body);
-    const { first_name, last_name, email, phone_number, job_title, salary, work_shifts } = validatedInput;
+    const { first_name, last_name, email, phone_number, job_title, salary, work_shift } = validatedInput;
 
     const staff = await StaffModel.findById(id);
     if (!staff) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.STAFF_NOT_FOUND);
@@ -89,7 +108,7 @@ export const updateStaffById = async (req: Request, res: Response) => {
     staff.phone_number = phone_number || staff.phone_number;
     staff.job_title = job_title?.trim().toLowerCase() || staff.job_title;
     staff.salary = salary || staff.salary;
-    staff.work_shifts = work_shifts || staff.work_shifts;
+    staff.work_shift = work_shift || staff.work_shift;
 
     await staff.save();
 

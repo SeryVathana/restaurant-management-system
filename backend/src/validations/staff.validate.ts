@@ -7,7 +7,7 @@ export const createStaffSchema = z.object({
   phone_number: string().min(6, "invalid phone number"),
   job_title: string(),
   salary: number({ invalid_type_error: "salary must be integer" }).min(0),
-  work_shifts: array(string()),
+  work_shift: string(),
   hire_date: string().optional(),
 });
 
