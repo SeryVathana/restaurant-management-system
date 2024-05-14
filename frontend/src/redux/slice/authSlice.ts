@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login, signOut } from "./authThunk";
+import { login, register, signOut } from "./authThunk";
 
 // Define types for user data and login/fetch response
 interface User {
@@ -35,6 +35,18 @@ export const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(login.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(register.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        const { token, user } = action.payload;
+        state.token = token;
+        state.userData = user;
+        state.loading = false;
+      })
+      .addCase(register.rejected, (state) => {
         state.loading = false;
       });
   },

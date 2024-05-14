@@ -1,13 +1,29 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useAppDispatch } from "@/redux/hooks";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { signOut } from "@/redux/slice/authThunk";
 import { updateUserCart } from "@/redux/slice/cartThunk";
-import { getCart, setCart } from "@/utils/HelperFunctions";
+import { RootState } from "@/redux/store";
+import { getCart } from "@/utils/HelperFunctions";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export interface food {
   _id: string;
@@ -19,14 +35,21 @@ export interface food {
 }
 
 const OrderPage = () => {
+  const auth = useAppSelector((state: RootState) => state.auth);
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [foods, setFoods] = useState<any>(null);
+  const [comments, setComments] = useState<string>("");
+  const [locationURL, setLocationURL] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchFoods, setSearchFoods] = useState<any>(null);
-
   const [selectedFood, setSelectedFood] = useState<food[]>([]);
+  const [isOpenDialog, setIsOpenDialog] = useState<boolean>(false);
+  const [isErrorInputLocation, setIsErrorInputLocation] = useState<boolean>(false);
 
-  const ALL_FOODS_URL = "http://localhost:3000/food/getAllFoods";
+  const { toast } = useToast();
+
+  const ALL_FOODS_URL = "http://localhost:3000/food/getAllFoods?sorted=true";
   const SEARCH_FOODS_URL = "http://localhost:3000/food/getFoodsByTitle";
 
   useEffect(() => {
@@ -72,6 +95,70 @@ const OrderPage = () => {
     }
   };
 
+  const handleCreateOrder = (e: any) => {
+    e.preventDefault();
+
+    if (!locationURL) {
+      setIsErrorInputLocation(true);
+      return;
+    }
+
+    const orderedFood = [];
+    for (let i = 0; i < selectedFood.length; i++) {
+      orderedFood.push({
+        food_id: selectedFood[i]._id,
+        quantity: selectedFood[i].quantity,
+      });
+    }
+
+    const order = {
+      foods: orderedFood,
+      comment: comments,
+      location_url: locationURL,
+    };
+
+    console.log(order);
+
+    setIsOpenDialog(false);
+
+    fetch("http://localhost:3000/order/createOrder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + auth.token,
+      },
+      body: JSON.stringify(order),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+
+        if (data.code == 200) {
+          toast({
+            title: "Success!",
+            description: "Your order has been placed successfully.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: "There was a problem with your request.",
+          });
+          setSelectedFood([]);
+          setComments("");
+          setLocationURL("");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+        });
+      });
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch(ALL_FOODS_URL);
@@ -96,6 +183,22 @@ const OrderPage = () => {
     }
   }, [searchTerm]);
 
+  useEffect(() => {
+    fetch("http://localhost:3000/auth/checkSession", {
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.code != 200) {
+          dispatch(signOut());
+          navigate("/login");
+        }
+      });
+  }, [selectedFood, handleCreateOrder]);
+
   if (!foods) {
     return (
       <div className="flex items-center justify-center w-full h-80">
@@ -107,7 +210,7 @@ const OrderPage = () => {
   return (
     <>
       <section className="text-gray-700 body-font">
-        <div className="container mx-auto flex px-5 py-10 md:flex-row flex-col items-center">
+        <div className="container mx-auto flex py-10 px-0 md:flex-row flex-col items-center">
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
             <h1 className="text-6xl mb-4 font-medium text-gray-900">
               Start Your <br /> <span className="text-primary">Order</span> Now
@@ -134,14 +237,14 @@ const OrderPage = () => {
           <Search className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full w-5 h-5 text-muted-foreground" />
         </div>
 
-        <div className="grid grid-cols-4 gap-5 px-5">
+        <div className="grid grid-cols-4 gap-5">
           {searchFoods?.map((food: any, index: number) => {
             return <FoodCard food={food} key={index} selectedFood={selectedFood} handleSelectedFood={handleSelectedFood} />;
           })}
         </div>
       </section>
 
-      <div className="px-5 mt-5">
+      <div className="mt-5">
         <div className=" space-y-5 my-10">
           <CategoryContainer foods={foods.breakfast} title={"Breakfast"} selectedFood={selectedFood} handleSelectedFood={handleSelectedFood} />
           <CategoryContainer foods={foods.lunch} title={"Lunch"} selectedFood={selectedFood} handleSelectedFood={handleSelectedFood} />
@@ -176,38 +279,89 @@ const OrderPage = () => {
             <p className="font-manrope font-bold text-2xl leading-9 text-gray-900">$300.00</p>
           </div>
         </div>
+        <Toaster />
         <div>
           <p className="font-bold text-2xl">More info</p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 items-center">
             <div className="sm:col-span-3">
-              <div className="mt-2">
+              <div className="mt-2 space-y-2">
                 <label htmlFor="comment" className="block text-lg font-medium leading-6 text-gray-900">
-                  Location
+                  Location <span className="text-destructive">(*required)</span>
                 </label>
                 <textarea
-                  className="block w-full min-h-48 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
+                  defaultValue={locationURL}
+                  placeholder="Enter your location URL here"
+                  onChange={(e) => setLocationURL(e.target.value)}
+                  className="block w-full min-h-48 rounded-none border-0 p-1.5 focus:border-5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                   name="bio"
                 ></textarea>
               </div>
             </div>
 
             <div className="sm:col-span-3">
-              <div className="mt-2">
+              <div className="mt-2 space-y-2">
                 <label htmlFor="comment" className="block text-lg font-medium leading-6 text-gray-900">
                   Comment
                 </label>
                 <textarea
-                  className="block w-full min-h-48 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
+                  placeholder="Enter your comment here"
+                  defaultValue={comments}
+                  onChange={(e) => setComments(e.target.value)}
+                  className="block w-full min-h-48 rounded-none border-0 p-1.5 focus:border-5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                   name="bio"
                 ></textarea>
               </div>
             </div>
           </div>
           <div className="w-full flex justify-end">
-            <Button type="submit" variant={"default"} className="rounded-none mt-20 w-1/5 text-lg py-7" size={"lg"}>
-              Submit
-            </Button>
+            <AlertDialog
+              open={isOpenDialog}
+              onOpenChange={() => {
+                setIsOpenDialog(!isOpenDialog);
+                return !isOpenDialog;
+              }}
+            >
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant={"default"}
+                  className="rounded-none mt-20 w-1/5 text-lg py-7"
+                  size={"lg"}
+                  disabled={selectedFood.length == 0 || !locationURL}
+                >
+                  Check out
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Check out</AlertDialogTitle>
+                  <AlertDialogDescription>This action cannot be undone. This will permanently add your order to the list.</AlertDialogDescription>
+
+                  <div className="py-5">
+                    <p className="text-sm font-semibold mb-2">Ordered food</p>
+                    <div className="border-b-[1px] w-full grid grid-cols-5 items-center bg-gray-50 px-5 py-2">
+                      <p className="text-sm font-medium col-span-3">Food</p>
+                      <p className="text-sm font-medium col-span-1">Price</p>
+                      <p className="text-sm font-medium col-span-1">Qty</p>
+                    </div>
+                    {selectedFood.map((food: food, index: number) => {
+                      return (
+                        <div className="border-b-[1px] w-full grid grid-cols-5 items-center bg-gray-50 px-5 py-2" key={index}>
+                          <p className="text-sm font-medium col-span-3">{food.title}</p>
+                          <p className="text-sm font-medium col-span-1">${food.price}</p>
+                          <p className="text-sm font-medium col-span-1">{food.quantity}</p>
+                        </div>
+                      );
+                    })}
+                    <p className="text-sm font-medium mt-2 w-full text-end">Total: $300.00</p>
+                  </div>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={(e) => handleCreateOrder(e)}>Confirm</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </div>
@@ -230,7 +384,7 @@ const CategoryContainer = ({
     <Accordion type="single" collapsible className="">
       <AccordionItem value="item-1">
         <AccordionTrigger className="text-xl hover:bg-gray-50">{title}</AccordionTrigger>
-        <AccordionContent className="grid grid-cols-4 gap-5">
+        <AccordionContent className="grid grid-cols-5 gap-5">
           {foods.map((food: any, index: number) => {
             return <FoodCard food={food} key={index} selectedFood={selectedFood} handleSelectedFood={handleSelectedFood} />;
           })}
@@ -271,7 +425,6 @@ const FoodCard = ({ food, selectedFood, handleSelectedFood }: { food: food; sele
         <div className="flex justify-between w-full items-center">
           <p className="text-xl font-bold">$3</p>
           <div className="flex items-center gap-2">
-            <p className="text-lg">Quantity</p>
             <Input
               type="number"
               min={0}

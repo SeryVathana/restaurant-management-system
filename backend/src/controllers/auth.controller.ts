@@ -30,8 +30,8 @@ export const registerCustomer = async (req: Request, res: Response) => {
     const jwtToken = await createUserToken(userObj);
 
     const resData = {
-      ...userObj,
-      jwt_token: jwtToken,
+      user: userObj,
+      token: jwtToken,
     };
     return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.REGISTERED, resData);
   } catch (error: any) {

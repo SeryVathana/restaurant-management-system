@@ -14,10 +14,12 @@ import { getToken } from "./utils/HelperFunctions";
 import { fetchUserData } from "./redux/slice/authThunk";
 import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
+import TestPage from "./Pages/TestPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/">
+      <Route path="/testing" element={<TestPage />} />
       <Route element={<NonComLayout />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

@@ -1,17 +1,25 @@
 import express from "express";
-import { verifyUserToken } from "../middlewares/auth.middleware";
-import { createOrder } from "../controllers/order.controller";
+import { checkAdminPermission, verifyUserToken } from "../middlewares/auth.middleware";
+import {
+  createOrder,
+  deleteOrderById,
+  getAllOrders,
+  getMyOrders,
+  getOrderByCustomerId,
+  getOrderById,
+  updateOrderStatus,
+} from "../controllers/order.controller";
 
 const orderRouter = express.Router();
 
 orderRouter.use(verifyUserToken);
 
-// // orderRouter.get("/getAllOrders", getAllOrders);
-// // orderRouter.get("/getOrderById/:id", getOrderById);
-// // orderRouter.get("/getOrderByCusId/:id", getOrderByCustomerId);
-
+orderRouter.get("/getAllOrders", checkAdminPermission, getAllOrders);
+orderRouter.get("/getMyOrders", getMyOrders);
+orderRouter.get("/getOrderByCusId/:id", getOrderByCustomerId);
+orderRouter.get("/getOrderById/:id", getOrderById);
 orderRouter.post("/createOrder", createOrder);
-
-// // orderRouter.patch("/updateOrderById/:id", updateOrderById);
+orderRouter.put("/updateOrderStatus/:id", checkAdminPermission, updateOrderStatus);
+orderRouter.delete("/deleteOrderById/:id", checkAdminPermission, deleteOrderById);
 
 export default orderRouter;

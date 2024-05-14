@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { register } from "@/redux/slice/authThunk";
 // import { register } from "@/redux/slice/authSlice";
 import { AppDispatch } from "@/redux/store";
 import { useState } from "react";
@@ -19,7 +20,7 @@ const RegisterPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("register: ", firstName, lastName, email, phoneNum, password);
-    // dispatch(register({ email }));
+    dispatch(register({ first_name: firstName, last_name: lastName, email, phone_number: phoneNum, password }));
   };
 
   return (

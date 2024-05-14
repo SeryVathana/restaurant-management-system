@@ -16,7 +16,7 @@ foodRouter.get("/getFoodById/:id", getFoodById);
 foodRouter.get("/getFoodsByCategory/:category", getFoodsByCategory);
 foodRouter.get("/getFoodsByTitle/:term", getFoodsByTitle);
 
-foodRouter.patch("/updateFoodById/:id", updateFoodById);
+foodRouter.put("/updateFoodById/:id", updateFoodById);
 foodRouter.post("/createFood", createFood);
 foodRouter.delete("/deleteFoodById/:id", deleteFoodById);
 
