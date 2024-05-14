@@ -43,12 +43,15 @@ const CustomerPage = () => {
       </div>
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader className="py-4">
-          <CardTitle>Users</CardTitle>
+          <CardTitle>Customers</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="hidden sm:table-cell">
+                  <span className="sr-only">No</span>
+                </TableHead>
                 <TableHead className="hidden w-[100px] sm:table-cell">
                   <span className="sr-only">Image</span>
                 </TableHead>
@@ -67,8 +70,15 @@ const CustomerPage = () => {
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 12, 13, 13].map((admin, index) => {
                 return (
                   <TableRow className="" key={index}>
+                    <TableCell className="max-w-fit">{index + 1}</TableCell>
                     <TableCell className="hidden sm:table-cell">
-                      <img alt="Product image" className="aspect-square rounded-full object-cover" height="48" src="/placeholder.svg" width="48" />
+                      <img
+                        alt="Product image"
+                        className="aspect-square object-cover border"
+                        height="48"
+                        src={"https://i.pinimg.com/564x/9f/9c/97/9f9c97b0c48c4a03270da070c7fe0bde.jpg"}
+                        width="48"
+                      />
                     </TableCell>
                     <TableCell className="font-medium">Laser Lemonade Machine</TableCell>
                     <TableCell className="font-medium">yooseryvathana@gmail.com</TableCell>

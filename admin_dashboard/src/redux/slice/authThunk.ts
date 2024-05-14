@@ -18,7 +18,7 @@ export const fetchUserData = createAsyncThunk("auth/fetchUserData", async (_, { 
 });
 
 export const login = createAsyncThunk("auth/login", async (payload: any) => {
-  const response = await axios.post("http://localhost:3000/auth/customer/login", payload);
+  const response = await axios.post("http://localhost:3000/auth/admin/login", payload);
   setToken(response.data.data.token);
   return response.data.data;
 });

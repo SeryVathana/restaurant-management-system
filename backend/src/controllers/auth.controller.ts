@@ -137,7 +137,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
     const jwtToken = await createUserToken(adminObj);
 
     const resData = {
-      ...adminObj,
+      user: adminObj,
       token: jwtToken,
     };
     return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.LOGGEDIN, resData);

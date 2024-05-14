@@ -15,7 +15,36 @@ export const getAllOrders = async (req: ILoggedInRequest, res: Response) => {
   try {
     const orders = await OrderModel.find({});
 
-    return sendResponse(res, SUCCESS_CODE.OK, "", orders);
+    const data: any = [];
+    for (let i = 0; i < orders.length; i++) {
+      let obj: any = {
+        _id: orders[i]._id,
+        user_fullname: "",
+        user_email: "",
+        order_status: orders[i].order_status,
+        total_foods: 0,
+        total_price: 0,
+        created_at: orders[i].createdAt,
+      };
+
+      const user = await UserModel.findById(orders[i].user_id);
+      if (user) {
+        obj.user_fullname = `${user.first_name} ${user.last_name}`;
+        obj.user_email = user.email;
+      }
+
+      obj.total_foods = orders[i].foods.reduce((acc: number, cur: any) => acc + cur.quantity, 0);
+
+      for (let j = 0; j < orders[i].foods.length; j++) {
+        const food = await FoodModel.findById(orders[i].foods[j].food_id);
+        if (!food) continue;
+        obj.total_price += food.price * orders[i].foods[j].quantity;
+      }
+
+      data.push(obj);
+    }
+
+    return sendResponse(res, SUCCESS_CODE.OK, "", data);
   } catch (error) {
     console.log(error);
     return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
@@ -96,13 +125,22 @@ export const getOrderById = async (req: ILoggedInRequest, res: Response) => {
 
     const data: any = {
       _id: order._id,
+      user_fullname: "",
+      user_email: "",
       order_status: order.order_status,
       total_price: 0,
+      total_foods: 0,
       created_at: order.createdAt,
       foods: [],
     };
 
-    console.log(order.foods.length);
+    const user = await UserModel.findById(order.user_id);
+    if (user) {
+      data.user_fullname = `${user.first_name} ${user.last_name}`;
+      data.user_email = user.email;
+    }
+
+    data.total_foods = order.foods.reduce((acc: number, cur: any) => acc + cur.quantity, 0);
 
     for (let j = 0; j < order.foods.length; j++) {
       const food = await FoodModel.findById(order.foods[j].food_id);

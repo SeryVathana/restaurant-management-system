@@ -22,7 +22,7 @@ const LoginPage = () => {
 
   const handleUserLogin = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    dispatch(login({ email_phone: email, password }));
+    dispatch(login({ email, password }));
   };
 
   return (
