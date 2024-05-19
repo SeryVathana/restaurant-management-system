@@ -8,19 +8,31 @@ import { isObjectIdOrHexString, mongo } from "mongoose";
 import { IStaff } from "../interfaces/interface";
 
 export const getAllStaffs = async (req: Request, res: Response) => {
-  const { work_shift, job_title } = req.query;
   try {
-    let staffs: IStaff[] = [];
+    const { query, work_shift, job_title, sort } = req.query;
 
-    if (work_shift && job_title) {
-      staffs = await StaffModel.find({ work_shift: work_shift, job_title });
-    } else if (work_shift) {
-      staffs = await StaffModel.find({ work_shift: work_shift });
-    } else if (job_title) {
-      staffs = await StaffModel.find({ job_title });
-    } else {
-      staffs = await StaffModel.find({});
+    const filter: any = {};
+
+    if (query) {
+      filter.$or = [
+        { first_name: { $regex: query, $options: "i" } },
+        { last_name: { $regex: query, $options: "i" } },
+        { email: { $regex: query, $options: "i" } },
+      ];
     }
+
+    if (work_shift) {
+      filter.work_shift = work_shift;
+    }
+
+    if (job_title) {
+      filter.job_title = job_title;
+    }
+
+    const sortFilter: any = sort === "newest" ? { createdAt: -1 } : { createdAt: 1 };
+
+    const staffs = await StaffModel.find(filter).sort(sortFilter);
+
     return sendResponse(res, SUCCESS_CODE.OK, "", staffs);
   } catch (error) {
     console.log(error);
@@ -44,25 +56,6 @@ export const getStaffById = async (req: Request, res: Response) => {
   }
 };
 
-export const searchStaffs = async (req: Request, res: Response) => {
-  const { query } = req.query;
-
-  try {
-    const staffs = await StaffModel.find({
-      $or: [
-        { email: { $regex: query, $options: "i" } },
-        { first_name: { $regex: query, $options: "i" } },
-        { last_name: { $regex: query, $options: "i" } },
-      ],
-    });
-
-    return sendResponse(res, SUCCESS_CODE.OK, "", staffs);
-  } catch (error) {
-    console.log(error);
-    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
-  }
-};
-
 export const createStaff = async (req: Request, res: Response) => {
   try {
     const validatedInput = createStaffSchema.parse(req.body);
@@ -77,7 +70,7 @@ export const createStaff = async (req: Request, res: Response) => {
   } catch (error: any) {
     if (error instanceof ZodError) {
       console.log(error);
-      return sendResponse(res, ERROR_CODE.INVALID_INPUT, ERROR_MESSAGE.INVALID_INPUT);
+      return sendResponse(res, ERROR_CODE.INVALID_INPUT, error.errors[0].message);
     }
 
     if (error instanceof mongo.MongoError && error.code == 11000) {

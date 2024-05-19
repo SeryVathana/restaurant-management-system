@@ -1,14 +1,10 @@
 import express from "express";
-import { createStaff, deleteStaffById, getAllStaffs, getStaffById, searchStaffs, updateStaffById } from "../controllers/staff.controller";
+import { createStaff, deleteStaffById, getAllStaffs, getStaffById, updateStaffById } from "../controllers/staff.controller";
 
 const staffRouter = express.Router();
 
 staffRouter.get("/getAllStaffs", getAllStaffs);
-
 staffRouter.get("/getStaffById/:id", getStaffById);
-staffRouter.get("/searchStaffs", searchStaffs);
-// staffRouter.get("/getStaffsByJob/:job_title", getStaffsByJob);
-
 staffRouter.post("/addNewStaff", createStaff);
 staffRouter.put("/updateStaffById/:id", updateStaffById);
 staffRouter.delete("/deleteStaffById/:id", deleteStaffById);

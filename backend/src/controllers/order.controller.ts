@@ -13,7 +13,9 @@ import { create } from "domain";
 
 export const getAllOrders = async (req: ILoggedInRequest, res: Response) => {
   try {
-    const orders = await OrderModel.find({});
+    const { sort } = req.query;
+    const sortFilter: any = sort === "newest" ? { createdAt: -1 } : { createdAt: 1 };
+    const orders = await OrderModel.find().sort(sortFilter);
 
     const data: any = [];
     for (let i = 0; i < orders.length; i++) {

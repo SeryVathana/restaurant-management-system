@@ -9,15 +9,22 @@ import { IFood } from "../interfaces/interface";
 import { match } from "assert";
 
 export const getAllFoods = async (req: Request, res: Response) => {
-  const { sorted } = req.query;
   try {
-    const foods: IFood[] = await FoodModel.find({});
+    const { search, sorted } = req.query;
+
+    let query = FoodModel.find();
+
+    if (search) {
+      query = query.find({ title: { $regex: search, $options: "i" } });
+    }
+
+    const foods: any = await query.exec();
 
     let result: any;
     if (sorted == "true") {
-      const breakfast = foods.filter((food) => food.categories.includes("breakfast"));
-      const lunch = foods.filter((food) => food.categories.includes("lunch"));
-      const dinner = foods.filter((food) => food.categories.includes("dinner"));
+      const breakfast = foods.filter((food: any) => food.categories.includes("breakfast"));
+      const lunch = foods.filter((food: any) => food.categories.includes("lunch"));
+      const dinner = foods.filter((food: any) => food.categories.includes("dinner"));
 
       result = { breakfast, lunch, dinner };
     }
@@ -40,18 +47,6 @@ export const getFoodById = async (req: Request, res: Response) => {
     if (!food) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.FOOD_NOT_FOUND);
 
     return sendResponse(res, SUCCESS_CODE.OK, "", food);
-  } catch (error) {
-    console.log(error);
-    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
-  }
-};
-
-export const getFoodsByTitle = async (req: Request, res: Response) => {
-  const { term } = req.params;
-
-  try {
-    const foods = await FoodModel.find({ title: { $regex: term.toLowerCase(), $options: "i" } });
-    return sendResponse(res, SUCCESS_CODE.OK, "", foods);
   } catch (error) {
     console.log(error);
     return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
@@ -84,7 +79,7 @@ export const createFood = async (req: Request, res: Response) => {
   } catch (error: any) {
     if (error instanceof ZodError) {
       console.log(error);
-      return sendResponse(res, ERROR_CODE.INVALID_INPUT, ERROR_MESSAGE.INVALID_INPUT);
+      return sendResponse(res, ERROR_CODE.INVALID_INPUT, error.errors[0].message);
     }
 
     console.log(error);

@@ -66,14 +66,6 @@ const DashboardLayout = () => {
             >
               Food
             </NavLink>
-            <NavLink
-              to="/category"
-              className={({ isActive }) => {
-                return isActive ? "font-semibold text-primary" : "";
-              }}
-            >
-              Categories
-            </NavLink>
           </nav>
           <div className="grid gap-6 py-5">
             <Outlet />

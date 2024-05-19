@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from "chart.js";
 import { Newspaper, Sparkles, User, Users } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -15,20 +16,66 @@ export const options = {
   },
 };
 
-const labels = getLastFiveMonths();
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: "Posts",
-      data: labels.map(() => Math.round(Math.random() * 200)),
-      backgroundColor: "rgba(64, 192, 87, 0.8)",
-    },
-  ],
+type ITotal = {
+  total: number;
+  new: number;
 };
 
 const DashboardOverviewPage = () => {
+  const [totalUsers, setTotalUsers] = useState<ITotal>({ total: 0, new: 0 });
+  const [totalOrders, setTotalOrders] = useState<ITotal>({ total: 0, new: 0 });
+  const [totalFoods, setTotalFoods] = useState<ITotal>({ total: 0, new: 0 });
+  const [totalStaffs, setTotalStaffs] = useState<ITotal>({ total: 0, new: 0 });
+  const [data, setData] = useState<any>({ labels: [], datasets: [] });
+  const [newestUsers, setNewestUsers] = useState<any[]>([]);
+
+  // Get total customers, orders, foods, staffs
+  useEffect(() => {
+    // Fetch total users
+    fetch("http://localhost:3000/dashboard/gettotalcustomers")
+      .then((res) => res.json())
+      .then((data) => setTotalUsers(data.data));
+    // Fetch total orders
+    fetch("http://localhost:3000/dashboard/gettotalorders")
+      .then((res) => res.json())
+      .then((data) => setTotalOrders(data.data));
+    // Fetch total foods
+    fetch("http://localhost:3000/dashboard/gettotalfood")
+      .then((res) => res.json())
+      .then((data) => setTotalFoods(data.data));
+    // Fetch total staffs
+    fetch("http://localhost:3000/dashboard/gettotalstaffs")
+      .then((res) => res.json())
+      .then((data) => setTotalStaffs(data.data));
+  }, []);
+
+  // Get total orders for last 6 months
+  useEffect(() => {
+    fetch("http://localhost:3000/dashboard/gettotalorderlast6month")
+      .then((res) => res.json())
+      .then((data) => {
+        const labels = getLastFiveMonths();
+        const datasets = [
+          {
+            label: "Orders",
+            data: labels.map((month) => data.data.find((d: any) => d.month === month.toLowerCase())?.total_orders || 0),
+            backgroundColor: "rgba(64, 192, 87, 0.8)",
+          },
+        ];
+
+        console.log(data.data, labels, datasets);
+
+        setData({ labels, datasets });
+      });
+  }, []);
+
+  // Get 10 newest users
+  useEffect(() => {
+    fetch("http://localhost:3000/dashboard/getnewestusers")
+      .then((res) => res.json())
+      .then((data) => setNewestUsers(data.data));
+  }, []);
+
   return (
     <main className="flex flex-1 flex-col gap-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -38,8 +85,8 @@ const DashboardOverviewPage = () => {
             <User className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">45,239</div>
-            <p className="text-xs text-muted-foreground">+20.1% from last week</p>
+            <div className="text-2xl font-bold">{totalUsers.total}</div>
+            <p className="text-xs text-muted-foreground">+{totalUsers.new} from last month</p>
           </CardContent>
         </Card>
         <Card x-chunk="dashboard-01-chunk-1">
@@ -48,8 +95,8 @@ const DashboardOverviewPage = () => {
             <Newspaper className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">235,034</div>
-            <p className="text-xs text-muted-foreground">+180.1% from last week</p>
+            <div className="text-2xl font-bold">{totalOrders.total}</div>
+            <p className="text-xs text-muted-foreground">+{totalOrders.new} from last month</p>
           </CardContent>
         </Card>
         <Card x-chunk="dashboard-01-chunk-2">
@@ -58,8 +105,8 @@ const DashboardOverviewPage = () => {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">122</div>
-            <p className="text-xs text-muted-foreground">+19% from last week</p>
+            <div className="text-2xl font-bold">{totalFoods.total}</div>
+            <p className="text-xs text-muted-foreground">+{totalFoods.new} from last month</p>
           </CardContent>
         </Card>
         <Card x-chunk="dashboard-01-chunk-3">
@@ -68,8 +115,8 @@ const DashboardOverviewPage = () => {
             <Sparkles className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">573</div>
-            <p className="text-xs text-muted-foreground">+201 since last week</p>
+            <div className="text-2xl font-bold">{totalStaffs.total}</div>
+            <p className="text-xs text-muted-foreground">+{totalStaffs.new} since last month</p>
           </CardContent>
         </Card>
       </div>
@@ -90,56 +137,20 @@ const DashboardOverviewPage = () => {
             <CardTitle>New customers</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-8">
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="/avatars/01.png" alt="Avatar" />
-                <AvatarFallback>OM</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">Olivia Martin</p>
-                <p className="text-sm text-muted-foreground">olivia.martin@email.com</p>
+            {newestUsers.map((user, index) => (
+              <div key={index} className="flex items-center gap-4">
+                <Avatar className="hidden h-9 w-9 sm:flex">
+                  <AvatarImage src="https://i.pinimg.com/736x/f1/39/dc/f139dc89e5b1ad0818f612c7f33200a5.jpg" alt="Avatar" />
+                  <AvatarFallback>OM</AvatarFallback>
+                </Avatar>
+                <div className="grid gap-1">
+                  <p className="text-sm font-medium leading-none">
+                    {user.first_name} {user.last_name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="/avatars/02.png" alt="Avatar" />
-                <AvatarFallback>JL</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">Jackson Lee</p>
-                <p className="text-sm text-muted-foreground">jackson.lee@email.com</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="/avatars/03.png" alt="Avatar" />
-                <AvatarFallback>IN</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">Isabella Nguyen</p>
-                <p className="text-sm text-muted-foreground">isabella.nguyen@email.com</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="/avatars/04.png" alt="Avatar" />
-                <AvatarFallback>WK</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">William Kim</p>
-                <p className="text-sm text-muted-foreground">will@email.com</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="/avatars/05.png" alt="Avatar" />
-                <AvatarFallback>SD</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">Sofia Davis</p>
-                <p className="text-sm text-muted-foreground">sofia.davis@email.com</p>
-              </div>
-            </div>
+            ))}
           </CardContent>
         </Card>
       </div>
@@ -155,7 +166,7 @@ function getLastFiveMonths() {
   const lastFiveMonths: string[] = [];
   for (let i = 0; i < 6; i++) {
     // Handle going back to December from January
-    const monthIndex = (currentMonth - i + 11) % 12;
+    const monthIndex = (currentMonth - i + 12) % 12;
     lastFiveMonths.push(months[monthIndex]);
   }
 

@@ -5,29 +5,30 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { RootState } from "@/redux/store";
 import { toCapitalize } from "@/utils/utils";
-import { format, set } from "date-fns";
-import { ListFilterIcon, MoreHorizontalIcon, Search } from "lucide-react";
+import { format } from "date-fns";
+import { ListFilterIcon, MoreHorizontalIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 const OrderPage = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const [orders, setOrders] = useState([] as any[]);
+  const [sort, setSort] = useState<string>("newest");
 
-  const getOrders = () => {
-    fetch("http://localhost:3000/order/getAllOrders", { headers: { Authorization: `Bearer ${auth.token}` } })
+  const handleFetchOrders = () => {
+    fetch("http://localhost:3000/order/getAllOrders?" + new URLSearchParams({ sort: sort ? sort : "" }), {
+      headers: { Authorization: `Bearer ${auth.token}` },
+    })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -36,19 +37,16 @@ const OrderPage = () => {
   };
 
   useEffect(() => {
-    getOrders();
+    handleFetchOrders();
   }, []);
+
+  useEffect(() => {
+    handleFetchOrders();
+  }, [sort]);
 
   return (
     <main className="grid flex-1 items-start gap-4">
-      <div className="flex items-center justify-between">
-        <div className="w-auto flex gap-3 items-center">
-          <Input type="text" placeholder="Search by name or email" className="w-[500px]" />
-          <Button type="button" variant={"secondary"}>
-            <Search className="w-4 mr-2" />
-            Search
-          </Button>
-        </div>
+      <div className="flex items-center justify-end">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="gap-1" variant="outline">
@@ -59,10 +57,15 @@ const OrderPage = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Filter by</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem checked>None</DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>Name</DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>Newest</DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>Oldest</DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem checked={sort == ""} onClick={() => setSort("")}>
+              None
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem checked={sort == "newest"} onClick={() => setSort("newest")}>
+              Newest
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem checked={sort == "oldest"} onClick={() => setSort("oldest")}>
+              Oldest
+            </DropdownMenuCheckboxItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -120,8 +123,7 @@ const OrderPage = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <OrderDetailsBtn order_id={order._id} />
-                          <ChangeStatusBtn order_id={order._id} />
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
+                          <ChangeStatusBtn order_id={order._id} handleFetchOrders={handleFetchOrders} />
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -160,7 +162,7 @@ const OrderDetailsBtn = ({ order_id }: { order_id: string }) => {
   );
 };
 
-const ChangeStatusBtn = ({ order_id }: { order_id: string }) => {
+const ChangeStatusBtn = ({ order_id, handleFetchOrders }: { order_id: string; handleFetchOrders: Function }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -171,7 +173,7 @@ const ChangeStatusBtn = ({ order_id }: { order_id: string }) => {
       <DialogContent className="max-w-screen-sm">
         <DialogHeader>
           <DialogTitle>Update order status</DialogTitle>
-          <UpdateDetails order_id={order_id} />
+          <UpdateDetails order_id={order_id} handleFetchOrders={handleFetchOrders} />
         </DialogHeader>
       </DialogContent>
     </Dialog>
@@ -238,7 +240,7 @@ const OrderDetails = ({ order_id }: { order_id: string }) => {
   );
 };
 
-const UpdateDetails = ({ order_id }: { order_id: string }) => {
+const UpdateDetails = ({ order_id, handleFetchOrders }: { order_id: string; handleFetchOrders: Function }) => {
   const auth = useSelector((state: RootState) => state.auth);
   const [detail, setDetail] = useState({} as any);
   const [status, setStatus] = useState<string>("pending");
@@ -253,6 +255,25 @@ const UpdateDetails = ({ order_id }: { order_id: string }) => {
         }
       });
   }, [order_id]);
+
+  const handleUpdate = (val: string) => {
+    console.log("update status", val);
+    fetch(`http://localhost:3000/order/updateOrderStatus/${order_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${auth.token}`,
+      },
+      body: JSON.stringify({ order_status: val }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.code == 200) {
+          handleFetchOrders();
+        }
+      });
+  };
 
   if (!detail) {
     return <div>Loading...</div>;
@@ -288,7 +309,12 @@ const UpdateDetails = ({ order_id }: { order_id: string }) => {
           </Label>
           {detail?._id && (
             <>
-              <Select defaultValue={status}>
+              <Select
+                defaultValue={status}
+                onValueChange={(e) => {
+                  handleUpdate(e);
+                }}
+              >
                 <SelectTrigger id="order-status" className="col-span-2">
                   <SelectValue placeholder={toCapitalize(status)} />
                 </SelectTrigger>

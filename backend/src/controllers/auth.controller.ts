@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { ZodError, string, z } from "zod";
 import { sendResponse } from "../utils/forward";
-import { customerRegisterScehma, customerLoginSchema, adminLoginSchema, adminRegisterScehma } from "../validations/auth.validate";
+import { customerRegisterScehma, customerLoginSchema, adminLoginSchema, adminRegisterScehma, adminEditScehma } from "../validations/auth.validate";
 import { hashString } from "../utils/funtion";
 import { ERROR_CODE, ERROR_MESSAGE, SUCCESS_CODE, SUCCESS_MESSAGE } from "../enums/enum";
 import { IAdmin, IUser } from "../interfaces/interface";
 import { createUserToken } from "../utils/token";
 import { UserModel } from "../models/user.model";
-import { mongo } from "mongoose";
+import { isObjectIdOrHexString, mongo } from "mongoose";
 import { AdminModel } from "../models/admin.model";
 
 export const registerCustomer = async (req: Request, res: Response) => {
@@ -146,6 +146,67 @@ export const loginAdmin = async (req: Request, res: Response) => {
       return sendResponse(res, ERROR_CODE.INVALID_INPUT, error.errors[0].message);
     }
 
+    console.log(error);
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
+  }
+};
+
+export const getAdmins = async (req: Request, res: Response) => {
+  try {
+    const admins = await AdminModel.find();
+    return sendResponse(res, SUCCESS_CODE.OK, "", admins);
+  } catch (error) {
+    console.log(error);
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
+  }
+};
+
+export const editAdmin = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const isObjId = isObjectIdOrHexString(id);
+    if (!isObjId) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.STAFF_NOT_FOUND);
+
+    const validatedInput = adminEditScehma.parse(req.body);
+    const { first_name, last_name, email, password } = validatedInput;
+
+    const admin = await AdminModel.findById(id);
+    if (!admin) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.STAFF_NOT_FOUND);
+
+    admin.first_name = first_name || admin.first_name;
+    admin.last_name = last_name || admin.last_name;
+    admin.email = email || admin.email;
+    admin.password = (password && hashString(password)) || admin.password;
+
+    await admin.save();
+
+    return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.UPDATED);
+  } catch (error: any) {
+    console.log(error);
+
+    if (error instanceof ZodError) {
+      return sendResponse(res, ERROR_CODE.INVALID_INPUT, error.errors[0].message);
+    }
+
+    if (error instanceof mongo.MongoError && error.code == 11000) {
+      return sendResponse(res, 400, String(error.message).includes("email") ? ERROR_MESSAGE.EMAIL_EXISTED : ERROR_MESSAGE.PHONE_EXISTED);
+    }
+
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
+  }
+};
+
+export const deleteAdmin = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const isObjId = isObjectIdOrHexString(id);
+    if (!isObjId) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.STAFF_NOT_FOUND);
+
+    const admin = await AdminModel.findByIdAndDelete(id);
+    if (!admin) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.STAFF_NOT_FOUND);
+
+    return sendResponse(res, SUCCESS_CODE.OK, SUCCESS_MESSAGE.DELETED);
+  } catch (error) {
     console.log(error);
     return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
   }

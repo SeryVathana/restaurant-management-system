@@ -12,7 +12,6 @@ import { getToken } from "./utils/HelperFunctions";
 import AdminPage from "./Pages/AdminPage";
 import CustomerPage from "./Pages/CustomerPage";
 import StaffPage from "./Pages/StaffPage";
-import CategoryPage from "./Pages/CategoryPage";
 import OrderPage from "./Pages/OrderPage";
 import FoodPage from "./Pages/FoodPage";
 
@@ -28,7 +27,6 @@ const router = createBrowserRouter(
         <Route path="customer" element={<CustomerPage />} />
         <Route path="food" element={<FoodPage />} />
         <Route path="order" element={<OrderPage />} />
-        <Route path="category" element={<CategoryPage />} />
         <Route path="staff" element={<StaffPage />} />
       </Route>
     </Route>
