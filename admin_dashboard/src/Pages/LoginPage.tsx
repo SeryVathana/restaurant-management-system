@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { login } from "@/redux/slice/authThunk";
+import { RootState } from "@/redux/store";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { RootState } from "@/redux/store";
 
 const LoginPage = () => {
   const dispatch = useAppDispatch();
