@@ -7,11 +7,10 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { useAppDispatch } from "@/redux/hooks";
-import { fetchUserData, signOut } from "@/redux/slice/authThunk";
+import { fetchUserData } from "@/redux/slice/authThunk";
 import { RootState } from "@/redux/store";
 import { getToken } from "@/utils/HelperFunctions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { set } from "date-fns";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -34,7 +33,6 @@ const EditProfilePage = () => {
   const [user, setUser] = useState<any | null>(null);
   const [errMsg, setErrMsg] = useState<string>("");
   const { toast } = useToast();
-  const dispatch = useAppDispatch();
   const passwordForm = useForm<z.infer<typeof passwordChangeSchema>>({
     resolver: zodResolver(passwordChangeSchema),
   });
@@ -111,7 +109,7 @@ const EditProfilePage = () => {
 
   const handleFetchUser = async () => {
     console.log(auth);
-    await fetch(`http://localhost:3000/customer/getCustomerById/${auth.userData._id}`, {
+    await fetch(`http://localhost:3000/auth/admin/${auth.userData._id}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -166,12 +164,6 @@ const EditProfilePage = () => {
                       <Label className="w-1/2">Last Name</Label>
                       <div className="w-full">
                         <p className="float-start">{user.last_name}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-10">
-                      <Label className="w-1/2">Phone Number</Label>
-                      <div className="w-full">
-                        <p className="float-start">{user.phone_number}</p>
                       </div>
                     </div>
                   </div>
@@ -266,7 +258,6 @@ const EditUserPfDialog = ({ user, handleFetchUserInfo }: { user: any; handleFetc
   const generalChangeSchema = z.object({
     first_name: z.string().optional(),
     last_name: z.string().optional(),
-    phone_number: z.string().optional(),
   });
 
   const generalForm = useForm<z.infer<typeof generalChangeSchema>>({
@@ -274,21 +265,24 @@ const EditUserPfDialog = ({ user, handleFetchUserInfo }: { user: any; handleFetc
     defaultValues: {
       first_name: user.first_name,
       last_name: user.last_name,
-      phone_number: user.phone_number,
     },
   });
 
   function onSubmitGeneral(values: z.infer<typeof generalChangeSchema>) {
-    if (!values.first_name && !values.last_name && !values.phone_number) {
+    if (!values.first_name && !values.last_name) {
       return;
     }
-    fetch(`http://localhost:3000/customer/updateCustomerInfo/${auth.userData._id}`, {
+    fetch(`http://localhost:3000/auth/admin/editAdmin/${auth.userData._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify({
+        first_name: values.first_name,
+        last_name: values.last_name,
+        email: auth.userData.email,
+      }),
     })
       .then((res) => res.json())
       .then(() => {
@@ -332,21 +326,6 @@ const EditUserPfDialog = ({ user, handleFetchUserInfo }: { user: any; handleFetc
               render={({ field }) => (
                 <FormItem className="flex items-center gap-10">
                   <FormLabel className="w-1/3">Last Name</FormLabel>
-                  <div className="w-2/3 space-y-2">
-                    <FormControl>
-                      <Input placeholder="" type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={generalForm.control}
-              name="phone_number"
-              render={({ field }) => (
-                <FormItem className="flex items-center gap-10">
-                  <FormLabel className="w-1/3">Phone Number</FormLabel>
                   <div className="w-2/3 space-y-2">
                     <FormControl>
                       <Input placeholder="" type="text" {...field} />

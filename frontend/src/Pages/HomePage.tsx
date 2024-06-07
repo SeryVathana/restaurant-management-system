@@ -9,9 +9,9 @@ const Homepage = () => {
       <section className="relative mx-auto">
         <div className="py-20 lg:flex">
           <div className="text-center lg:text-left lg:w-1/2">
-            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold leading-none">Main title of your landing page</h1>
+            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold leading-none">Welcome to our Restaurant!</h1>
             <p className="text-xl lg:text-2xl mt-6 font-light">
-              Free landing page template to promote your business startup and generate leads for the offered services
+              We offer a wide variety of delicious dishes made with fresh ingredients. Come and experience the flavors of our restaurant today!
             </p>
           </div>
 
@@ -43,10 +43,8 @@ const Homepage = () => {
         </div>
 
         <div className="text-center lg:text-right lg:w-1/2 lg:pl-8">
-          <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold leading-none">Main title of your landing page</h1>
-          <p className="text-xl lg:text-2xl mt-6 font-light">
-            Free landing page template to promote your business startup and generate leads for the offered services
-          </p>
+          <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold leading-none">Discover Our Specials</h1>
+          <p className="text-xl lg:text-2xl mt-6 font-light">Check out our daily specials and indulge in a unique dining experience.</p>
         </div>
       </div>
       <section className="w-full mx-auto">

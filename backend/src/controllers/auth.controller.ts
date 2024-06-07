@@ -211,3 +211,19 @@ export const deleteAdmin = async (req: Request, res: Response) => {
     return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
   }
 };
+
+export const getAdminById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const isObjId = isObjectIdOrHexString(id);
+    if (!isObjId) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.STAFF_NOT_FOUND);
+
+    const admin = await AdminModel.findById(id);
+    if (!admin) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.STAFF_NOT_FOUND);
+
+    return sendResponse(res, SUCCESS_CODE.OK, "", admin);
+  } catch (error) {
+    console.log(error);
+    return sendResponse(res, ERROR_CODE.SERVER_ERROR, ERROR_MESSAGE.SERVER_ERROR);
+  }
+};

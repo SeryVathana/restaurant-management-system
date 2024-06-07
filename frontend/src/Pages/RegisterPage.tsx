@@ -26,17 +26,17 @@ const RegisterPage = () => {
   return (
     <div className="flex flex-wrap items-center relative">
       <div className="absolute top-10 left-10">
-        <Link to={"/"} className="text-2xl px-0 text-primary">
+        <Link to={"/"} className="text-2xl px-0  text-primary">
           Fooddie
         </Link>
       </div>
       <div className="w-full sm:w-6/12 mb-10">
         <div className="container mx-auto h-full">
           <div className="space-y-4">
-            <h1 className="flex justify-center text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">Register</h1>
+            <h1 className="flex justify-center text-xl font-bold leading-tight tracking-tight  md:text-2xl ">Register</h1>
             <form className="space-y-4 md:space-y-6">
               <div>
-                <label htmlFor="first-name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <label htmlFor="first-name" className="block mb-2 text-sm font-medium ">
                   First Name
                 </label>
                 <Input
@@ -50,7 +50,7 @@ const RegisterPage = () => {
                 />
               </div>
               <div>
-                <label htmlFor="last-name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <label htmlFor="last-name" className="block mb-2 text-sm font-medium ">
                   Last Name
                 </label>
                 <Input
@@ -64,7 +64,7 @@ const RegisterPage = () => {
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <label htmlFor="email" className="block mb-2 text-sm font-medium ">
                   Email
                 </label>
                 <Input
@@ -78,7 +78,7 @@ const RegisterPage = () => {
                 />
               </div>
               <div>
-                <label htmlFor="phone" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <label htmlFor="phone" className="block mb-2 text-sm font-medium ">
                   Phone number
                 </label>
                 <Input
@@ -92,7 +92,7 @@ const RegisterPage = () => {
                 />
               </div>
               <div>
-                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <label htmlFor="password" className="block mb-2 text-sm font-medium ">
                   Password
                 </label>
                 <Input

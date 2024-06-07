@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -249,7 +250,7 @@ const OrderPage = () => {
       <section className="text-gray-700 body-font">
         {/* <div className="container mx-auto flex py-10 px-0 md:flex-row flex-col items-center">
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
-            <h1 className="text-6xl mb-4 font-medium text-gray-900">
+            <h1 className="text-6xl mb-4 font-medium">
               Start Your <br /> <span className="text-primary">Order</span> Now
             </h1>
           </div>
@@ -265,8 +266,8 @@ const OrderPage = () => {
         <div className="relative w-1/2 mx-auto my-10">
           <Input
             type="text"
-            placeholder="search food"
-            className="text-lg pr-8 h-14"
+            placeholder="Search food"
+            className="text-lg pr-8 h-14 bg-primary/5"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -303,7 +304,7 @@ const OrderPage = () => {
               </div>
               {selectedFood.map((food: food, index: number) => {
                 return (
-                  <div className="border-b-[1px] grid grid-cols-12 items-center bg-gray-50  text-md font-medium pr-2" key={index}>
+                  <div className="border-b-[1px] grid grid-cols-12 items-center text-md font-medium pr-2" key={index}>
                     <img src={food.img_url} className="w-14 h-14 object-cover col-span-1 m-2" />
 
                     <p className="col-span-3">{food.title_kh || "..."}</p>
@@ -323,27 +324,27 @@ const OrderPage = () => {
             </div>
           </div>
           <div className="flex items-center justify-end">
-            <p className="mx-10 font-semibold text-2xl leading-9 text-gray-900">Total</p>
-            <p className="font-bold text-2xl leading-9 text-gray-900">${totalPrice.toFixed(2)}</p>
+            <p className="mx-10 font-semibold text-2xl leading-9">Total</p>
+            <p className="font-bold text-2xl leading-9">${totalPrice.toFixed(2)}</p>
           </div>
         </div>
-        <Toaster />
+
         <div>
           <p className="font-bold text-2xl">More info</p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 items-center">
             <div className="sm:col-span-3">
               <div className="mt-2 space-y-2">
-                <label htmlFor="comment" className="block text-lg font-medium leading-6 text-gray-900">
+                <label htmlFor="comment" className="block text-lg font-medium leading-6">
                   Location <span className="text-destructive">(*required)</span>
                 </label>
                 <div className="min-h-64">
                   {locationURL ? (
                     <iframe className="w-full min-h-64" src={locationURL} allowFullScreen />
                   ) : (
-                    <div className="w-full h-full">
-                      <Button onClick={() => getLocation()} variant={"default"} className="rounded-none mt-20 text-lg py-7" size={"lg"}>
-                        Get Location
+                    <div className="w-full min-h-64 flex justify-center items-center border bg-primary/5">
+                      <Button onClick={() => getLocation()} variant={"secondary"} className="rounded-none text-lg py-7 " size={"lg"}>
+                        Get Current Location
                       </Button>
                     </div>
                   )}
@@ -353,16 +354,16 @@ const OrderPage = () => {
 
             <div className="sm:col-span-3">
               <div className="mt-2 space-y-2">
-                <label htmlFor="comment" className="block text-lg font-medium leading-6 text-gray-900">
+                <label htmlFor="comment" className="block text-lg font-medium leading-6">
                   Comment
                 </label>
-                <textarea
+                <Textarea
                   placeholder="Enter your comment here"
                   defaultValue={comments}
                   onChange={(e) => setComments(e.target.value)}
-                  className="block w-full min-h-64 rounded-none border-0 p-1.5 focus:border-5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
+                  className="block w-full min-h-64 rounded-none p-2 bg-primary/5"
                   name="bio"
-                ></textarea>
+                ></Textarea>
               </div>
             </div>
           </div>
@@ -391,7 +392,7 @@ const OrderPage = () => {
 
                 <div className="py-5">
                   <p className="text-sm font-semibold mb-2">Ordered food</p>
-                  <div className="border-b-[1px] w-full grid grid-cols-9 items-center bg-gray-50 py-2">
+                  <div className="border-b-[1px] w-full grid grid-cols-9 items-center py-2">
                     <p className="text-sm font-medium col-span-1"></p>
                     <p className="text-sm font-medium col-span-5">Food</p>
                     <p className="text-sm font-medium col-span-2">Price</p>
@@ -399,7 +400,7 @@ const OrderPage = () => {
                   </div>
                   {selectedFood.map((food: food, index: number) => {
                     return (
-                      <div className="border-b-[1px] w-full grid grid-cols-9 items-center bg-gray-50 py-2" key={index}>
+                      <div className="border-b-[1px] w-full grid grid-cols-9 items-center py-2" key={index}>
                         <div className="col-span-1 px-2">
                           <img src={food.img_url} className="text-sm font-medium col-span-1 w-10 h-10" />
                         </div>
@@ -440,7 +441,7 @@ const CategoryContainer = ({
   return (
     <Accordion type="single" collapsible className="">
       <AccordionItem value="item-1">
-        <AccordionTrigger className="text-xl hover:bg-gray-50">{title}</AccordionTrigger>
+        <AccordionTrigger className="text-xl hover:bg-primary/20">{title}</AccordionTrigger>
         <AccordionContent className="grid grid-cols-5 gap-5">
           {foods.map((food: any, index: number) => {
             return <FoodCard food={food} key={index} selectedFood={selectedFood} handleSelectedFood={handleSelectedFood} />;
@@ -469,7 +470,7 @@ const FoodCard = ({ food, selectedFood, handleSelectedFood }: { food: food; sele
   }, [selectedFood]);
 
   return (
-    <Card className="overflow-hidden rounded-none shadow-none bg-gray-50 flex flex-col justify-between">
+    <Card className="overflow-hidden rounded-none shadow-none bg-card flex flex-col justify-between">
       <CardHeader className="p-0">
         <CardTitle className="w-full">
           <AspectRatio ratio={1 / 1}>

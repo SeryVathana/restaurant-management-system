@@ -14,6 +14,7 @@ import CustomerPage from "./Pages/CustomerPage";
 import StaffPage from "./Pages/StaffPage";
 import OrderPage from "./Pages/OrderPage";
 import FoodPage from "./Pages/FoodPage";
+import EditProfilePage from "./Pages/EditProfile";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
       </Route>
       <Route element={<MainLayout />}>
         <Route index element={<Homepage />} />
+        <Route path="edit-profile" element={<EditProfilePage />} />
         <Route path="admin" element={<AdminPage />} />
         <Route path="customer" element={<CustomerPage />} />
         <Route path="food" element={<FoodPage />} />

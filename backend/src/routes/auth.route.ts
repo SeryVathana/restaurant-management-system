@@ -1,5 +1,14 @@
 import express, { Request, Response } from "express";
-import { deleteAdmin, editAdmin, getAdmins, loginAdmin, loginCustomer, registerAdmin, registerCustomer } from "../controllers/auth.controller";
+import {
+  deleteAdmin,
+  editAdmin,
+  getAdminById,
+  getAdmins,
+  loginAdmin,
+  loginCustomer,
+  registerAdmin,
+  registerCustomer,
+} from "../controllers/auth.controller";
 import { verifyUserToken } from "../middlewares/auth.middleware";
 import { sendResponse } from "../utils/forward";
 
@@ -8,6 +17,7 @@ const authRouter = express.Router();
 authRouter.post("/admin/register", registerAdmin);
 authRouter.post("/admin/login", loginAdmin);
 authRouter.get("/admin/getalladmins", getAdmins);
+authRouter.get("/admin/:id", getAdminById);
 authRouter.put("/admin/editadmin/:id", editAdmin);
 authRouter.delete("/admin/deleteadmin/:id", deleteAdmin);
 authRouter.post("/customer/register", registerCustomer);

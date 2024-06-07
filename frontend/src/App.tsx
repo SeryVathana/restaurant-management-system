@@ -16,6 +16,7 @@ import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import TestPage from "./Pages/TestPage";
 import EditProfilePage from "./Pages/EditProfile";
+import { Toaster } from "./components/ui/toaster";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -54,6 +55,7 @@ function App() {
     <Provider store={store}>
       <PersistGate persistor={persistor}>
         <RouterProvider router={router} />
+        <Toaster />
       </PersistGate>
     </Provider>
   );

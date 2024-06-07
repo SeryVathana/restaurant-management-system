@@ -59,7 +59,7 @@ const DashboardOverviewPage = () => {
           {
             label: "Orders",
             data: labels.map((month) => data.data.find((d: any) => d.month === month.toLowerCase())?.total_orders || 0),
-            backgroundColor: "rgba(64, 192, 87, 0.8)",
+            backgroundColor: "hsl(164 46% 39%)",
           },
         ];
 
