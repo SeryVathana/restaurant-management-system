@@ -55,7 +55,7 @@ const EditProfilePage = () => {
 
     console.log(reqBody);
 
-    fetch(`http://localhost:3000/customer/updateCustomerPassword/${auth.userData._id}`, {
+    fetch(`https://restaurant-management-system-e4qi.onrender.com/customer/updateCustomerPassword/${auth.userData._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -109,7 +109,7 @@ const EditProfilePage = () => {
 
   const handleFetchUser = async () => {
     console.log(auth);
-    await fetch(`http://localhost:3000/auth/admin/${auth.userData._id}`, {
+    await fetch(`https://restaurant-management-system-e4qi.onrender.com/auth/admin/${auth.userData._id}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -272,7 +272,7 @@ const EditUserPfDialog = ({ user, handleFetchUserInfo }: { user: any; handleFetc
     if (!values.first_name && !values.last_name) {
       return;
     }
-    fetch(`http://localhost:3000/auth/admin/editAdmin/${auth.userData._id}`, {
+    fetch(`https://restaurant-management-system-e4qi.onrender.com/auth/admin/editAdmin/${auth.userData._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

@@ -1,30 +1,16 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { signOut } from "@/redux/slice/authThunk";
-import { updateUserCart } from "@/redux/slice/cartThunk";
 import { RootState } from "@/redux/store";
 import { getCart, setCart } from "@/utils/HelperFunctions";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
-import { get } from "http";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -54,8 +40,8 @@ const OrderPage = () => {
 
   const { toast } = useToast();
 
-  const ALL_FOODS_URL = "http://localhost:3000/food/getAllFoods?sorted=true";
-  // const SEARCH_FOODS_URL = "http://localhost:3000/food/";
+  const ALL_FOODS_URL = "https://restaurant-management-system-e4qi.onrender.com/food/getAllFoods?sorted=true";
+  // const SEARCH_FOODS_URL = "https://restaurant-management-system-e4qi.onrender.com/food/";
 
   useEffect(() => {
     const cart = getCart();
@@ -122,7 +108,7 @@ const OrderPage = () => {
 
     console.log(order);
 
-    fetch("http://localhost:3000/order/createOrder", {
+    fetch("https://restaurant-management-system-e4qi.onrender.com/order/createOrder", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -180,7 +166,7 @@ const OrderPage = () => {
         sort: "true",
         search: searchTerm,
       });
-      const res = await fetch(`http://localhost:3000/food/getAllFoods?${params.toString()}`);
+      const res = await fetch(`https://restaurant-management-system-e4qi.onrender.com/food/getAllFoods?${params.toString()}`);
       const data = await res.json();
 
       setSearchFoods(data.data);
@@ -192,7 +178,7 @@ const OrderPage = () => {
   }, [searchTerm]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/auth/checkSession", {
+    fetch("https://restaurant-management-system-e4qi.onrender.com/auth/checkSession", {
       headers: {
         Authorization: `Bearer ${auth.token}`,
       },

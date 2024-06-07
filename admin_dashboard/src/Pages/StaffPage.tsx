@@ -49,7 +49,7 @@ function StaffPage() {
   const handleFetchStaffs = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3000/staff/getAllStaffs?" +
+        "https://restaurant-management-system-e4qi.onrender.com/staff/getAllStaffs?" +
           new URLSearchParams({
             query: search ? search : "",
             sort: sort ? sort : "",
@@ -67,7 +67,7 @@ function StaffPage() {
 
   const handleDeleteStaff = async (id: string) => {
     try {
-      const res = await axios.delete("http://localhost:3000/staff/deleteStaffById/" + id);
+      const res = await axios.delete("https://restaurant-management-system-e4qi.onrender.com/staff/deleteStaffById/" + id);
       console.log(res.data);
       handleFetchStaffs();
     } catch (err) {
@@ -302,7 +302,7 @@ const EditStaffDialog = ({ staff, handleFetchStaffs }: { staff: any; handleFetch
     }
 
     try {
-      fetch("http://localhost:3000/staff/updateStaffById/" + id, {
+      fetch("https://restaurant-management-system-e4qi.onrender.com/staff/updateStaffById/" + id, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -455,7 +455,7 @@ const AddStaffDialog = ({ handleFetchStaffs }: { handleFetchStaffs: Function }) 
     }
 
     try {
-      fetch("http://localhost:3000/staff/addNewStaff", {
+      fetch("https://restaurant-management-system-e4qi.onrender.com/staff/addNewStaff", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

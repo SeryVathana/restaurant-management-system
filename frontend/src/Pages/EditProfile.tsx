@@ -7,11 +7,10 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { useAppDispatch } from "@/redux/hooks";
-import { fetchUserData, signOut } from "@/redux/slice/authThunk";
+import { fetchUserData } from "@/redux/slice/authThunk";
 import { RootState } from "@/redux/store";
 import { getToken } from "@/utils/HelperFunctions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { set } from "date-fns";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -34,7 +33,6 @@ const EditProfilePage = () => {
   const [user, setUser] = useState<any | null>(null);
   const [errMsg, setErrMsg] = useState<string>("");
   const { toast } = useToast();
-  const dispatch = useAppDispatch();
   const passwordForm = useForm<z.infer<typeof passwordChangeSchema>>({
     resolver: zodResolver(passwordChangeSchema),
   });
@@ -57,7 +55,7 @@ const EditProfilePage = () => {
 
     console.log(reqBody);
 
-    fetch(`http://localhost:3000/customer/updateCustomerPassword/${auth.userData._id}`, {
+    fetch(`https://restaurant-management-system-e4qi.onrender.com/customer/updateCustomerPassword/${auth.userData._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -111,7 +109,7 @@ const EditProfilePage = () => {
 
   const handleFetchUser = async () => {
     console.log(auth);
-    await fetch(`http://localhost:3000/customer/getCustomerById/${auth.userData._id}`, {
+    await fetch(`https://restaurant-management-system-e4qi.onrender.com/customer/getCustomerById/${auth.userData._id}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -282,7 +280,7 @@ const EditUserPfDialog = ({ user, handleFetchUserInfo }: { user: any; handleFetc
     if (!values.first_name && !values.last_name && !values.phone_number) {
       return;
     }
-    fetch(`http://localhost:3000/customer/updateCustomerInfo/${auth.userData._id}`, {
+    fetch(`https://restaurant-management-system-e4qi.onrender.com/customer/updateCustomerInfo/${auth.userData._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

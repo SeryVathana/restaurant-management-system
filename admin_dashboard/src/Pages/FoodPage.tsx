@@ -33,7 +33,9 @@ function FoodPage() {
 
   const handleFetchFoods = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/food/getAllFoods?sorted=false" + (search ? "&search=" + search : ""));
+      const res = await axios.get(
+        "https://restaurant-management-system-e4qi.onrender.com/food/getAllFoods?sorted=false" + (search ? "&search=" + search : "")
+      );
       const data = await res.data;
       console.log(data.data);
       setFoods(data.data);
@@ -44,7 +46,7 @@ function FoodPage() {
 
   const handleRemoveFood = (inputId: string) => {
     try {
-      fetch("http://localhost:3000/food/deleteFoodById/" + inputId, {
+      fetch("https://restaurant-management-system-e4qi.onrender.com/food/deleteFoodById/" + inputId, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -218,7 +220,7 @@ function EditFoodDialog({ food, handleFetchFoods }: { food: Food; handleFetchFoo
     }
 
     try {
-      fetch("http://localhost:3000/food/updateFoodById/" + food._id, {
+      fetch("https://restaurant-management-system-e4qi.onrender.com/food/updateFoodById/" + food._id, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -415,7 +417,7 @@ function AddFoodDialog({ handleFetchFoods }: { handleFetchFoods: Function }) {
     const imgDownloadURL = await getDownloadURL(uploadDisplay.ref);
 
     try {
-      fetch("http://localhost:3000/food/createFood", {
+      fetch("https://restaurant-management-system-e4qi.onrender.com/food/createFood", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

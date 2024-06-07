@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 const MenuPage = () => {
   const [foods, setFoods] = useState<any>(null);
 
-  const URL = "http://localhost:3000/food/getAllFoods?sorted=true";
+  const URL = "https://restaurant-management-system-e4qi.onrender.com/food/getAllFoods?sorted=true";
 
   useEffect(() => {
     const fetchData = async () => {

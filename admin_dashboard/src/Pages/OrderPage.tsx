@@ -26,7 +26,7 @@ const OrderPage = () => {
   const [sort, setSort] = useState<string>("newest");
 
   const handleFetchOrders = () => {
-    fetch("http://localhost:3000/order/getAllOrders?" + new URLSearchParams({ sort: sort ? sort : "" }), {
+    fetch("https://restaurant-management-system-e4qi.onrender.com/order/getAllOrders?" + new URLSearchParams({ sort: sort ? sort : "" }), {
       headers: { Authorization: `Bearer ${auth.token}` },
     })
       .then((res) => res.json())
@@ -184,7 +184,9 @@ const OrderDetails = ({ order_id }: { order_id: string }) => {
   const auth = useSelector((state: RootState) => state.auth);
   const [detail, setDetail] = useState({} as any);
   useEffect(() => {
-    fetch(`http://localhost:3000/order/getOrderById/${order_id}`, { headers: { Authorization: `Bearer ${auth.token}` } })
+    fetch(`https://restaurant-management-system-e4qi.onrender.com/order/getOrderById/${order_id}`, {
+      headers: { Authorization: `Bearer ${auth.token}` },
+    })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -245,7 +247,9 @@ const UpdateDetails = ({ order_id, handleFetchOrders }: { order_id: string; hand
   const [detail, setDetail] = useState({} as any);
   const [status, setStatus] = useState<string>("pending");
   useEffect(() => {
-    fetch(`http://localhost:3000/order/getOrderById/${order_id}`, { headers: { Authorization: `Bearer ${auth.token}` } })
+    fetch(`https://restaurant-management-system-e4qi.onrender.com/order/getOrderById/${order_id}`, {
+      headers: { Authorization: `Bearer ${auth.token}` },
+    })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -258,7 +262,7 @@ const UpdateDetails = ({ order_id, handleFetchOrders }: { order_id: string; hand
 
   const handleUpdate = (val: string) => {
     console.log("update status", val);
-    fetch(`http://localhost:3000/order/updateOrderStatus/${order_id}`, {
+    fetch(`https://restaurant-management-system-e4qi.onrender.com/order/updateOrderStatus/${order_id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

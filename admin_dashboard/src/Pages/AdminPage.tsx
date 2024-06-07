@@ -14,13 +14,13 @@ function AdminPage() {
   const [admins, setAdmins] = useState<any[]>([]);
 
   function handleFetchAdmins() {
-    fetch("http://localhost:3000/auth/admin/getalladmins")
+    fetch("https://restaurant-management-system-e4qi.onrender.com/auth/admin/getalladmins")
       .then((res) => res.json())
       .then((data) => setAdmins(data.data));
   }
 
   function handleDeleteAdmin(id: string) {
-    fetch(`http://localhost:3000/auth/admin/deleteadmin/${id}`, {
+    fetch(`https://restaurant-management-system-e4qi.onrender.com/auth/admin/deleteadmin/${id}`, {
       method: "DELETE",
     })
       .then((res) => res.json())
@@ -156,7 +156,7 @@ const EditAdminDialog = ({ admin, handleFetchAdmins }: { admin: any; handleFetch
       data["password"] = password;
     }
 
-    fetch(`http://localhost:3000/auth/admin/editadmin/${admin._id}`, {
+    fetch(`https://restaurant-management-system-e4qi.onrender.com/auth/admin/editadmin/${admin._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -247,7 +247,7 @@ const AddAdminDialog = ({ handleFetchAdmins }: { handleFetchAdmins: Function }) 
       return;
     }
 
-    fetch("http://localhost:3000/auth/admin/register", {
+    fetch("https://restaurant-management-system-e4qi.onrender.com/auth/admin/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

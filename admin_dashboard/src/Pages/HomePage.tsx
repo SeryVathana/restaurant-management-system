@@ -32,26 +32,26 @@ const DashboardOverviewPage = () => {
   // Get total customers, orders, foods, staffs
   useEffect(() => {
     // Fetch total users
-    fetch("http://localhost:3000/dashboard/gettotalcustomers")
+    fetch("https://restaurant-management-system-e4qi.onrender.com/dashboard/gettotalcustomers")
       .then((res) => res.json())
       .then((data) => setTotalUsers(data.data));
     // Fetch total orders
-    fetch("http://localhost:3000/dashboard/gettotalorders")
+    fetch("https://restaurant-management-system-e4qi.onrender.com/dashboard/gettotalorders")
       .then((res) => res.json())
       .then((data) => setTotalOrders(data.data));
     // Fetch total foods
-    fetch("http://localhost:3000/dashboard/gettotalfood")
+    fetch("https://restaurant-management-system-e4qi.onrender.com/dashboard/gettotalfood")
       .then((res) => res.json())
       .then((data) => setTotalFoods(data.data));
     // Fetch total staffs
-    fetch("http://localhost:3000/dashboard/gettotalstaffs")
+    fetch("https://restaurant-management-system-e4qi.onrender.com/dashboard/gettotalstaffs")
       .then((res) => res.json())
       .then((data) => setTotalStaffs(data.data));
   }, []);
 
   // Get total orders for last 6 months
   useEffect(() => {
-    fetch("http://localhost:3000/dashboard/gettotalorderlast6month")
+    fetch("https://restaurant-management-system-e4qi.onrender.com/dashboard/gettotalorderlast6month")
       .then((res) => res.json())
       .then((data) => {
         const labels = getLastFiveMonths();
@@ -71,7 +71,7 @@ const DashboardOverviewPage = () => {
 
   // Get 10 newest users
   useEffect(() => {
-    fetch("http://localhost:3000/dashboard/getnewestusers")
+    fetch("https://restaurant-management-system-e4qi.onrender.com/dashboard/getnewestusers")
       .then((res) => res.json())
       .then((data) => setNewestUsers(data.data));
   }, []);

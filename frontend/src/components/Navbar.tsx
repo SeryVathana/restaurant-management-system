@@ -130,7 +130,7 @@ const OrderHistoryContent = ({ setOrdersLength }) => {
   const [selectedOrderId, setSelectedOrderId] = useState<string>("");
 
   useEffect(() => {
-    fetch("http://localhost:3000/order/getMyOrders", { headers: { Authorization: `Bearer ${auth.token}` } })
+    fetch("https://restaurant-management-system-e4qi.onrender.com/order/getMyOrders", { headers: { Authorization: `Bearer ${auth.token}` } })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -142,7 +142,9 @@ const OrderHistoryContent = ({ setOrdersLength }) => {
   useEffect(() => {
     console.log(selectedOrderId);
     if (selectedOrderId != "") {
-      fetch(`http://localhost:3000/order/getOrderById/${selectedOrderId}`, { headers: { Authorization: `Bearer ${auth.token}` } })
+      fetch(`https://restaurant-management-system-e4qi.onrender.com/order/getOrderById/${selectedOrderId}`, {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      })
         .then((res) => res.json())
         .then((data) => {
           console.log(data);

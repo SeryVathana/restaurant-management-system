@@ -23,7 +23,10 @@ const CustomerPage = () => {
 
   const fetchCustomers = async () => {
     try {
-      fetch("http://localhost:3000/customer/getallcustomers?" + new URLSearchParams({ search: search ? search : "", sort: sort ? sort : "" }))
+      fetch(
+        "https://restaurant-management-system-e4qi.onrender.com/customer/getallcustomers?" +
+          new URLSearchParams({ search: search ? search : "", sort: sort ? sort : "" })
+      )
         .then((res) => res.json())
         .then((data) => setCustomers(data.data));
     } catch (error) {
@@ -33,7 +36,7 @@ const CustomerPage = () => {
 
   const deleteCustomer = async (id: string) => {
     try {
-      fetch("http://localhost:3000/customer/deletecustomerbyid/" + id, {
+      fetch("https://restaurant-management-system-e4qi.onrender.com/customer/deletecustomerbyid/" + id, {
         method: "DELETE",
       }).then(() => {
         fetchCustomers();
