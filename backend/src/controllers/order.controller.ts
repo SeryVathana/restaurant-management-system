@@ -9,7 +9,6 @@ import { isObjectIdOrHexString } from "mongoose";
 import { FoodModel } from "../models/food.model";
 import { AdminModel } from "../models/admin.model";
 import { UserModel } from "../models/user.model";
-import { create } from "domain";
 
 export const getAllOrders = async (req: ILoggedInRequest, res: Response) => {
   try {
@@ -58,7 +57,7 @@ export const getMyOrders = async (req: ILoggedInRequest, res: Response) => {
   try {
     if (!user) return sendResponse(res, ERROR_CODE.UNAUTHORIZED, ERROR_MESSAGE.UNAUTHORIZED);
 
-    const orders = await OrderModel.find({ user_id: user._id });
+    const orders = await OrderModel.find({ user_id: user._id }).sort({ createdAt: -1 });
 
     const data: any = [];
     for (let i = 0; i < orders.length; i++) {

@@ -10,8 +10,6 @@ export const verifyUserToken = async (req: ILoggedInRequest, res: Response, next
     const authorization = req.headers["authorization"];
     if (!authorization) return sendResponse(res, ERROR_CODE.UNAUTHORIZED, ERROR_MESSAGE.MISSING_AUTH_HEADER);
 
-    console.log("authorization", authorization);
-
     const [type, token] = authorization.split(" ");
     if (type.toLowerCase() != "bearer") return sendResponse(res, ERROR_CODE.UNAUTHORIZED, ERROR_MESSAGE.INVALID_TOKEN_TYPE);
 

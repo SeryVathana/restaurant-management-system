@@ -26,7 +26,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex flex-wrap items-center relative">
+    <div className="flex flex-wrap items-center relative min-h-[100vh]">
       <div className="absolute top-10 left-10">
         <Link to={"/"} className="text-2xl px-0 text-primary">
           Fooddie
@@ -65,33 +65,12 @@ const LoginPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <Checkbox id="remember" />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">
-                      Remember me
-                    </label>
-                  </div>
-                </div>
-                <a href="#" className="text-sm font-medium text-primary hover:underline dark:text-primary-500">
-                  Forgot password?
-                </a>
-              </div>
               <Button
                 onClick={(e) => handleUserLogin(e)}
                 className="w-full font-medium rounded-none text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Sign in
               </Button>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet?{" "}
-                <Link to="/register" className="font-medium text-primary-600 hover:underline dark:text-primary-500">
-                  Sign up
-                </Link>
-              </p>
             </form>
           </div>
         </div>

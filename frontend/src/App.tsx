@@ -15,6 +15,7 @@ import { fetchUserData } from "./redux/slice/authThunk";
 import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import TestPage from "./Pages/TestPage";
+import EditProfilePage from "./Pages/EditProfile";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,6 +37,8 @@ const router = createBrowserRouter(
             </ProtectedLayout>
           }
         />
+
+        <Route path="/edit-profile" element={<EditProfilePage />} />
       </Route>
     </Route>
   )

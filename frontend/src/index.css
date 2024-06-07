@@ -1,7 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@100..900&display=swap");
 
+body {
+  @apply font-sans antialiased;
+}
 
 @layer base {
   :root {
@@ -49,7 +53,6 @@
     --ring: 142.4 71.8% 29.2%;
   }
 }
-
 
 @layer base {
   * {

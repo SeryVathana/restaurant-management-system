@@ -8,6 +8,11 @@ const foodSchema = new Schema(
       required: true,
       index: true,
     },
+    title_kh: {
+      type: String,
+      required: false,
+      index: true,
+    },
     description: {
       type: String,
     },

@@ -6,16 +6,18 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { storage } from "@/lib/firebase";
 import axios from "axios";
-import { AlertCircle, DollarSign, MoreHorizontalIcon, PlusCircleIcon } from "lucide-react";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { AlertCircle, DollarSign, MoreHorizontalIcon, PlusCircleIcon, Upload, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type Food = {
   _id: string;
   title: string;
+  title_kh: string;
   description: string;
   price: number;
   img_url: string;
@@ -81,7 +83,8 @@ function FoodPage() {
                 <TableHead className="hidden w-[100px] sm:table-cell">
                   <span className="sr-only">Image</span>
                 </TableHead>
-                <TableHead>Name</TableHead>
+                <TableHead>Name (KH)</TableHead>
+                <TableHead className="w-fit">Name (EN)</TableHead>
                 <TableHead>Categories</TableHead>
                 <TableHead className="hidden md:table-cell">Price</TableHead>
                 <TableHead className="hidden md:table-cell">Created at</TableHead>
@@ -98,7 +101,8 @@ function FoodPage() {
                     <TableCell className="hidden sm:table-cell">
                       <img alt="Product image" className="aspect-square  object-cover" height="48" src={food.img_url} width="48" />
                     </TableCell>
-                    <TableCell className="font-medium">{food.title}</TableCell>
+                    <TableCell className="font-medium">{food.title_kh || "..."}</TableCell>
+                    <TableCell className="font-medium">{food.title || "..."}</TableCell>
                     <TableCell>{food.categories.join(", ")}</TableCell>
                     <TableCell className="hidden md:table-cell">$ {food.price.toFixed(2)}</TableCell>
                     <TableCell className="hidden md:table-cell">2023-07-12 10:42 AM</TableCell>
@@ -159,8 +163,10 @@ function FoodPage() {
 export default FoodPage;
 
 function EditFoodDialog({ food, handleFetchFoods }: { food: Food; handleFetchFoods: Function }) {
-  const [imgUrl, setImgUrl] = useState<string>(food.img_url);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [tempImgURL, setTempImgURL] = useState<string>(food.img_url);
   const [title, setTitle] = useState<string>(food.title);
+  const [titleKh, setTitleKh] = useState<string>(food.title_kh);
   const [description, setDescription] = useState<string>(food.description);
   const [price, setPrice] = useState<number>(food.price);
   const [categories, setCategories] = useState<string[]>(food.categories);
@@ -168,12 +174,12 @@ function EditFoodDialog({ food, handleFetchFoods }: { food: Food; handleFetchFoo
   const [isError, setIsError] = useState<boolean>(false);
   const [errMsg, setErrMsg] = useState<string>("");
 
-  const handleImgUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setImgUrl(event.target.value);
-  };
-
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
+  };
+
+  const handleTitleKhChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitleKh(event.target.value);
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -192,14 +198,23 @@ function EditFoodDialog({ food, handleFetchFoods }: { food: Food; handleFetchFoo
     }
   };
 
-  const handleEditFood = () => {
+  const handleEditFood = async () => {
     setErrMsg("");
     setIsError(false);
 
-    if (!imgUrl || !title || !description || !price || categories.length === 0) {
+    if (!tempImgURL || !title || !description || !price || categories.length === 0) {
       setIsError(true);
       setErrMsg("Please fill in all fields.");
       return;
+    }
+
+    let imgDownloadURL = tempImgURL;
+
+    if (uploadFile) {
+      const fileName = `user-uploaded/${uploadFile} - ${new Date().getTime()}`;
+      const imgs = ref(storage, fileName);
+      const uploadDisplay = await uploadBytes(imgs, uploadFile);
+      imgDownloadURL = await getDownloadURL(uploadDisplay.ref);
     }
 
     try {
@@ -209,8 +224,9 @@ function EditFoodDialog({ food, handleFetchFoods }: { food: Food; handleFetchFoo
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          img_url: imgUrl,
+          img_url: imgDownloadURL,
           title,
+          title_kh: titleKh,
           description,
           price,
           categories,
@@ -234,6 +250,17 @@ function EditFoodDialog({ food, handleFetchFoods }: { food: Food; handleFetchFoo
     }
   };
 
+  function handleTempFileUpload(e: any) {
+    setUploadFile(e.target.files[0]);
+    const url = URL.createObjectURL(e.target.files[0]);
+    setTempImgURL(url);
+  }
+
+  function handleRemoveTempImg() {
+    setUploadFile(null);
+    setTempImgURL("");
+  }
+
   return (
     <Dialog open={open} onOpenChange={() => setOpen(!open)}>
       <DialogTrigger asChild>
@@ -248,12 +275,41 @@ function EditFoodDialog({ food, handleFetchFoods }: { food: Food; handleFetchFoo
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="img_url">Image URL</Label>
-            <Input id="img_url" value={imgUrl} onChange={handleImgUrlChange} className="col-span-3" />
+            <Label htmlFor="img_url">Image</Label>
+            <div className=" col-span-3 h-full flex justify-center relative">
+              {tempImgURL ? (
+                <div className="h-64 overflow-hidden w-full border">
+                  <img src={tempImgURL} alt={tempImgURL} className="w-full h-full object-contain" />
+                  <Button size="icon" variant="outline" className="absolute top-2 right-2 p-0" onClick={() => handleRemoveTempImg()}>
+                    <X className="w-5 text-red-500" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="w-full h-64 relative bg-gray-100 flex flex-col items-center justify-center border border-dashed border-gray-200">
+                  <input
+                    type="file"
+                    className="absolute inset-0 w-full h-full opacity-0 z-50 cursor-pointer"
+                    onChange={(e) => handleTempFileUpload(e)}
+                  />
+                  <Upload className="my-5" />
+                  <h3 className="font-medium text-xl">
+                    <label htmlFor="file-upload" className="relative cursor-pointer ">
+                      <span>Drag and drop</span>
+                      <span className="text-indigo-600"> or browse </span>
+                      <span>to upload</span>
+                    </label>
+                  </h3>
+                </div>
+              )}
+            </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">Title (EN)</Label>
             <Input id="title" value={title} onChange={handleTitleChange} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="titleKh">Title (KH)</Label>
+            <Input id="titleKh" value={titleKh} onChange={handleTitleKhChange} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="description">Description</Label>
@@ -268,7 +324,7 @@ function EditFoodDialog({ food, handleFetchFoods }: { food: Food; handleFetchFoo
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label>Categories</Label>
-            <div className="space-y-4">
+            <div className="flex items-center gap-2">
               <div className="flex gap-1 items-center">
                 <Checkbox id="breakfast" checked={categories.includes("breakfast")} onChange={() => handleCategoryChange("breakfast")} />
                 <Label htmlFor="breakfast">Breakfast</Label>
@@ -309,8 +365,10 @@ function EditFoodDialog({ food, handleFetchFoods }: { food: Food; handleFetchFoo
 }
 
 function AddFoodDialog({ handleFetchFoods }: { handleFetchFoods: Function }) {
-  const [imgUrl, setImgUrl] = useState<string>("");
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [tempImgURL, setTempImgURL] = useState<string>("");
   const [title, setTitle] = useState<string>("");
+  const [titleKh, setTitleKh] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [categories, setCategories] = useState<string[]>([]);
@@ -318,12 +376,11 @@ function AddFoodDialog({ handleFetchFoods }: { handleFetchFoods: Function }) {
   const [errMsg, setErrMsg] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
 
-  const handleImgUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setImgUrl(event.target.value);
-  };
-
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
+  };
+  const handleTitleKhChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitleKh(event.target.value);
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -342,15 +399,20 @@ function AddFoodDialog({ handleFetchFoods }: { handleFetchFoods: Function }) {
     }
   };
 
-  const handleAddFood = () => {
+  const handleAddFood = async () => {
     setErrMsg("");
     setIsError(false);
 
-    if (!imgUrl || !title || !description || !price || categories.length === 0) {
+    if (!tempImgURL || !title || !description || !price || categories.length === 0) {
       setIsError(true);
       setErrMsg("Please fill in all fields.");
       return;
     }
+
+    const fileName = `user-uploaded/${uploadFile} - ${new Date().getTime()}`;
+    const imgs = ref(storage, fileName);
+    const uploadDisplay = await uploadBytes(imgs, uploadFile);
+    const imgDownloadURL = await getDownloadURL(uploadDisplay.ref);
 
     try {
       fetch("http://localhost:3000/food/createFood", {
@@ -359,8 +421,9 @@ function AddFoodDialog({ handleFetchFoods }: { handleFetchFoods: Function }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          img_url: imgUrl,
+          img_url: imgDownloadURL,
           title,
+          title_kh: titleKh,
           description,
           price,
           categories,
@@ -381,6 +444,17 @@ function AddFoodDialog({ handleFetchFoods }: { handleFetchFoods: Function }) {
     }
   };
 
+  function handleTempFileUpload(e: any) {
+    setUploadFile(e.target.files[0]);
+    const url = URL.createObjectURL(e.target.files[0]);
+    setTempImgURL(url);
+  }
+
+  function handleRemoveTempImg() {
+    setUploadFile(null);
+    setTempImgURL("");
+  }
+
   return (
     <Dialog open={open} onOpenChange={() => setOpen(!open)}>
       <DialogTrigger asChild>
@@ -396,12 +470,41 @@ function AddFoodDialog({ handleFetchFoods }: { handleFetchFoods: Function }) {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="img_url">Image URL</Label>
-            <Input id="img_url" value={imgUrl} onChange={handleImgUrlChange} className="col-span-3" />
+            <Label htmlFor="img_url">Image</Label>
+            <div className=" col-span-3 h-full flex justify-center relative">
+              {tempImgURL ? (
+                <div className="h-64 overflow-hidden w-full border">
+                  <img src={tempImgURL} alt={tempImgURL} className="w-full h-full object-contain" />
+                  <Button size="icon" variant="outline" className="absolute top-2 right-2 p-0" onClick={() => handleRemoveTempImg()}>
+                    <X className="w-5 text-red-500" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="w-full h-64 relative bg-gray-100 flex flex-col items-center justify-center border border-dashed border-gray-200">
+                  <input
+                    type="file"
+                    className="absolute inset-0 w-full h-full opacity-0 z-50 cursor-pointer"
+                    onChange={(e) => handleTempFileUpload(e)}
+                  />
+                  <Upload className="my-5" />
+                  <h3 className="font-medium text-xl">
+                    <label htmlFor="file-upload" className="relative cursor-pointer ">
+                      <span>Drag and drop</span>
+                      <span className="text-indigo-600"> or browse </span>
+                      <span>to upload</span>
+                    </label>
+                  </h3>
+                </div>
+              )}
+            </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="title">Title</Label>
             <Input id="title" value={title} onChange={handleTitleChange} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="titleKh">Title</Label>
+            <Input id="titleKh" value={titleKh} onChange={handleTitleKhChange} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="description">Description</Label>
@@ -416,7 +519,7 @@ function AddFoodDialog({ handleFetchFoods }: { handleFetchFoods: Function }) {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label>Categories</Label>
-            <div className="space-y-4">
+            <div className="flex gap-2">
               <div className="flex gap-1 items-center">
                 <Checkbox id="breakfast" checked={categories.includes("breakfast")} onCheckedChange={() => handleCategoryChange("breakfast")} />
                 <Label htmlFor="breakfast">Breakfast</Label>

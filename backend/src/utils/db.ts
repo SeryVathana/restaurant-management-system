@@ -6,7 +6,7 @@ dotenv.config();
 
 async function connectToDB() {
   return mongoose
-    .connect("mongodb://localhost:27017/res-man-db")
+    .connect("mongodb+srv://seryvathana:K0mLAKPldcVgRaoF@cluster0.dlz7mru.mongodb.net/my-database")
     .then(() => {
       console.log("Database connected.");
     })

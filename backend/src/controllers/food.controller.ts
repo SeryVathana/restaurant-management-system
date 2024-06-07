@@ -4,9 +4,7 @@ import { ERROR_CODE, ERROR_MESSAGE, SUCCESS_CODE, SUCCESS_MESSAGE } from "../enu
 import { createFoodSchema, updateFoodSchema } from "../validations/food.validate";
 import { ZodError } from "zod";
 import { FoodModel } from "../models/food.model";
-import { IfAny, ObjectId, isObjectIdOrHexString } from "mongoose";
-import { IFood } from "../interfaces/interface";
-import { match } from "assert";
+import { isObjectIdOrHexString } from "mongoose";
 
 export const getAllFoods = async (req: Request, res: Response) => {
   try {
@@ -15,7 +13,12 @@ export const getAllFoods = async (req: Request, res: Response) => {
     let query = FoodModel.find();
 
     if (search) {
-      query = query.find({ title: { $regex: search, $options: "i" } });
+      query = query.find(
+        {
+          $or: [{ title: { $regex: search, $options: "i" } }, { title_kh: { $regex: search, $options: "i" } }],
+        },
+        { title: 1, title_kh: 1 }
+      );
     }
 
     const foods: any = await query.exec();
@@ -94,12 +97,13 @@ export const updateFoodById = async (req: Request, res: Response) => {
     if (!isObjId) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.FOOD_NOT_FOUND);
 
     const validatedInput = updateFoodSchema.parse(req.body);
-    const { title, description, img_url, price, categories } = validatedInput;
+    const { title, title_kh, description, img_url, price, categories } = validatedInput;
 
     const food = await FoodModel.findById(id);
     if (!food) return sendResponse(res, ERROR_CODE.NOT_FOUND, ERROR_MESSAGE.FOOD_NOT_FOUND);
 
     food.title = title || food.title;
+    food.title_kh = title_kh || food.title_kh;
     food.description = description || food.description;
     food.img_url = img_url || food.img_url;
     food.price = price || food.price;

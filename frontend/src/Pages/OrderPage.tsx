@@ -13,6 +13,7 @@ import {
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
@@ -20,7 +21,9 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { signOut } from "@/redux/slice/authThunk";
 import { updateUserCart } from "@/redux/slice/cartThunk";
 import { RootState } from "@/redux/store";
-import { getCart } from "@/utils/HelperFunctions";
+import { getCart, setCart } from "@/utils/HelperFunctions";
+import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { get } from "http";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +31,7 @@ import { useNavigate } from "react-router-dom";
 export interface food {
   _id: string;
   title: string;
+  title_kh: string;
   quantity: string;
   price: string;
   img_url?: string;
@@ -45,12 +49,12 @@ const OrderPage = () => {
   const [searchFoods, setSearchFoods] = useState<any>(null);
   const [selectedFood, setSelectedFood] = useState<food[]>([]);
   const [isOpenDialog, setIsOpenDialog] = useState<boolean>(false);
-  const [isErrorInputLocation, setIsErrorInputLocation] = useState<boolean>(false);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
 
   const { toast } = useToast();
 
   const ALL_FOODS_URL = "http://localhost:3000/food/getAllFoods?sorted=true";
-  const SEARCH_FOODS_URL = "http://localhost:3000/food/getFoodsByTitle";
+  // const SEARCH_FOODS_URL = "http://localhost:3000/food/";
 
   useEffect(() => {
     const cart = getCart();
@@ -67,39 +71,37 @@ const OrderPage = () => {
   const handleSelectedFood = ({ food, value }: { food: any; value: any }) => {
     const index = selectedFood.findIndex((x) => x._id == food._id);
     if (Number(value) > 0) {
-      if (index != -1) {
-        setSelectedFood((foodSelected) =>
-          foodSelected.map((x) => {
-            if (x._id == food._id) {
-              x.quantity = value;
-              return x;
-            } else {
-              return x;
-            }
-          })
-        );
-        const curCart = JSON.stringify(selectedFood);
-        dispatch(updateUserCart(curCart));
+      if (index !== -1) {
+        setSelectedFood((foodSelected) => foodSelected.map((x) => (x._id === food._id ? { ...x, quantity: value } : x)));
       } else {
         setSelectedFood((foodSelected) => [
           ...foodSelected,
-          { _id: food._id, title: food.title, price: food.price, img_url: food.img_url, quantity: value },
+          { _id: food._id, title: food.title, title_kh: food.title_kh, price: food.price, img_url: food.img_url, quantity: value },
         ]);
-        const curCart = JSON.stringify(selectedFood);
-        dispatch(updateUserCart(curCart));
       }
     } else {
-      setSelectedFood((foodSelected) => foodSelected.splice(index, 1));
-      const curCart = JSON.stringify(selectedFood);
-      dispatch(updateUserCart(curCart));
+      setSelectedFood((foodSelected) => foodSelected.filter((x) => x._id !== food._id));
     }
   };
+
+  useEffect(() => {
+    if (selectedFood.length != 0) {
+      const curCart = JSON.stringify(selectedFood);
+      setCart(curCart);
+
+      //get total price
+      let total = 0;
+      for (let i = 0; i < selectedFood.length; i++) {
+        total += Number(selectedFood[i].price) * Number(selectedFood[i].quantity);
+      }
+      setTotalPrice(total);
+    }
+  }, [selectedFood]);
 
   const handleCreateOrder = (e: any) => {
     e.preventDefault();
 
     if (!locationURL) {
-      setIsErrorInputLocation(true);
       return;
     }
 
@@ -119,8 +121,6 @@ const OrderPage = () => {
 
     console.log(order);
 
-    setIsOpenDialog(false);
-
     fetch("http://localhost:3000/order/createOrder", {
       method: "POST",
       headers: {
@@ -138,15 +138,18 @@ const OrderPage = () => {
             title: "Success!",
             description: "Your order has been placed successfully.",
           });
+          setSelectedFood([]);
+          setComments("");
+          setLocationURL("");
+          setIsOpenDialog(false);
+          setTotalPrice(0);
+          localStorage.removeItem("cart");
         } else {
           toast({
             variant: "destructive",
             title: "Uh oh! Something went wrong.",
             description: "There was a problem with your request.",
           });
-          setSelectedFood([]);
-          setComments("");
-          setLocationURL("");
         }
       })
       .catch((err) => {
@@ -172,7 +175,11 @@ const OrderPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch(SEARCH_FOODS_URL + `/${searchTerm.trim().toLowerCase()}`);
+      const params = new URLSearchParams({
+        sort: "true",
+        search: searchTerm,
+      });
+      const res = await fetch(`http://localhost:3000/food/getAllFoods?${params.toString()}`);
       const data = await res.json();
 
       setSearchFoods(data.data);
@@ -191,13 +198,43 @@ const OrderPage = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.code != 200) {
           dispatch(signOut());
           navigate("/login");
         }
       });
   }, [selectedFood, handleCreateOrder]);
+
+  useEffect(() => {
+    const cart = localStorage.getItem("cart");
+    if (cart) {
+      const cartData = JSON.parse(cart);
+      setSelectedFood(cartData);
+    }
+  }, []);
+
+  const getLocation = async () => {
+    if (navigator.geolocation) {
+      try {
+        const position: any = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+        const newLocationURL = `https://www.google.com/maps/embed/v1/place?key=AIzaSyAgpJW3GHyLvXjpVdEL_pbjYlJCcvz5Q5g&q=${position.coords.latitude},${position.coords.longitude}`;
+        setLocationURL(newLocationURL);
+      } catch (error) {
+        console.error("Error getting location:", error);
+        // Handle geolocation errors gracefully (optional)
+
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+        });
+      }
+    } else {
+      console.warn("Geolocation is not supported by this browser.");
+    }
+  };
 
   if (!foods) {
     return (
@@ -210,7 +247,7 @@ const OrderPage = () => {
   return (
     <>
       <section className="text-gray-700 body-font">
-        <div className="container mx-auto flex py-10 px-0 md:flex-row flex-col items-center">
+        {/* <div className="container mx-auto flex py-10 px-0 md:flex-row flex-col items-center">
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
             <h1 className="text-6xl mb-4 font-medium text-gray-900">
               Start Your <br /> <span className="text-primary">Order</span> Now
@@ -223,7 +260,7 @@ const OrderPage = () => {
               src="https://i.pinimg.com/564x/2c/d3/28/2cd3288a45254ca3f6a0251ce47b7bd4.jpg"
             />
           </div>
-        </div>
+        </div> */}
 
         <div className="relative w-1/2 mx-auto my-10">
           <Input
@@ -237,7 +274,7 @@ const OrderPage = () => {
           <Search className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full w-5 h-5 text-muted-foreground" />
         </div>
 
-        <div className="grid grid-cols-4 gap-5">
+        <div className="grid grid-cols-5 gap-5">
           {searchFoods?.map((food: any, index: number) => {
             return <FoodCard food={food} key={index} selectedFood={selectedFood} handleSelectedFood={handleSelectedFood} />;
           })}
@@ -256,16 +293,27 @@ const OrderPage = () => {
             <h3 className="text-2xl font-bold">Ordered</h3>
 
             <div className="pb-5">
+              <div className="border-b-[1px] grid grid-cols-12 items-center text-lg font-medium">
+                <p className="col-span-1 h-full  p-5 text-center"></p>
+                <p className="col-span-3">Name (KH)</p>
+                <p className="col-span-3">Name (EN)</p>
+                <p className="col-span-2">Price</p>
+                <p className="col-span-2">Total Price</p>
+                <p className="col-span-1">Qty</p>
+              </div>
               {selectedFood.map((food: food, index: number) => {
                 return (
-                  <div className="border-b-[1px] flex items-center bg-gray-50 pr-5" key={index}>
-                    <p className="w-16 h-full  p-5 text-center">{index + 1}</p>
-                    <p className="text-lg w-52 font-medium pl-5">{food.title}</p>
-                    <p className="text-lg font-medium pl-5 ml-16">${food.price}</p>
+                  <div className="border-b-[1px] grid grid-cols-12 items-center bg-gray-50  text-md font-medium pr-2" key={index}>
+                    <img src={food.img_url} className="w-14 h-14 object-cover col-span-1 m-2" />
+
+                    <p className="col-span-3">{food.title_kh || "..."}</p>
+                    <p className="col-span-3">{food.title}</p>
+                    <p className="col-span-2">${Number(food.price).toFixed(2)}</p>
+                    <p className="col-span-2">${(Number(food.price) * Number(food.quantity)).toFixed(2)}</p>
                     <Input
                       type="number"
                       min={0}
-                      className="max-w-[80px] rounded-none  text-lg ml-auto"
+                      className="rounded-none text-lg"
                       value={food.quantity}
                       onChange={(e) => handleSelectedFood({ food, value: e.target.value })}
                     />
@@ -275,8 +323,8 @@ const OrderPage = () => {
             </div>
           </div>
           <div className="flex items-center justify-end">
-            <p className="font-manrope mx-10 font-semibold text-2xl leading-9 text-gray-900">Total</p>
-            <p className="font-manrope font-bold text-2xl leading-9 text-gray-900">$300.00</p>
+            <p className="mx-10 font-semibold text-2xl leading-9 text-gray-900">Total</p>
+            <p className="font-bold text-2xl leading-9 text-gray-900">${totalPrice.toFixed(2)}</p>
           </div>
         </div>
         <Toaster />
@@ -289,13 +337,17 @@ const OrderPage = () => {
                 <label htmlFor="comment" className="block text-lg font-medium leading-6 text-gray-900">
                   Location <span className="text-destructive">(*required)</span>
                 </label>
-                <textarea
-                  defaultValue={locationURL}
-                  placeholder="Enter your location URL here"
-                  onChange={(e) => setLocationURL(e.target.value)}
-                  className="block w-full min-h-48 rounded-none border-0 p-1.5 focus:border-5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
-                  name="bio"
-                ></textarea>
+                <div className="min-h-64">
+                  {locationURL ? (
+                    <iframe className="w-full min-h-64" src={locationURL} allowFullScreen />
+                  ) : (
+                    <div className="w-full h-full">
+                      <Button onClick={() => getLocation()} variant={"default"} className="rounded-none mt-20 text-lg py-7" size={"lg"}>
+                        Get Location
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -308,60 +360,65 @@ const OrderPage = () => {
                   placeholder="Enter your comment here"
                   defaultValue={comments}
                   onChange={(e) => setComments(e.target.value)}
-                  className="block w-full min-h-48 rounded-none border-0 p-1.5 focus:border-5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
+                  className="block w-full min-h-64 rounded-none border-0 p-1.5 focus:border-5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                   name="bio"
                 ></textarea>
               </div>
             </div>
           </div>
           <div className="w-full flex justify-end">
-            <AlertDialog
+            <Dialog
               open={isOpenDialog}
               onOpenChange={() => {
                 setIsOpenDialog(!isOpenDialog);
-                return !isOpenDialog;
               }}
             >
-              <AlertDialogTrigger asChild>
+              <DialogTrigger asChild>
                 <Button
                   variant={"default"}
-                  className="rounded-none mt-20 w-1/5 text-lg py-7"
+                  className="rounded-none mt-20 text-lg py-7"
                   size={"lg"}
                   disabled={selectedFood.length == 0 || !locationURL}
                 >
                   Check out
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Check out</AlertDialogTitle>
-                  <AlertDialogDescription>This action cannot be undone. This will permanently add your order to the list.</AlertDialogDescription>
+              </DialogTrigger>
+              <DialogContent className="">
+                <DialogHeader>
+                  <DialogTitle>Check out</DialogTitle>
+                  <DialogDescription>This action cannot be undone. This will permanently add your order to the list.</DialogDescription>
+                </DialogHeader>
 
-                  <div className="py-5">
-                    <p className="text-sm font-semibold mb-2">Ordered food</p>
-                    <div className="border-b-[1px] w-full grid grid-cols-5 items-center bg-gray-50 px-5 py-2">
-                      <p className="text-sm font-medium col-span-3">Food</p>
-                      <p className="text-sm font-medium col-span-1">Price</p>
-                      <p className="text-sm font-medium col-span-1">Qty</p>
-                    </div>
-                    {selectedFood.map((food: food, index: number) => {
-                      return (
-                        <div className="border-b-[1px] w-full grid grid-cols-5 items-center bg-gray-50 px-5 py-2" key={index}>
-                          <p className="text-sm font-medium col-span-3">{food.title}</p>
-                          <p className="text-sm font-medium col-span-1">${food.price}</p>
-                          <p className="text-sm font-medium col-span-1">{food.quantity}</p>
-                        </div>
-                      );
-                    })}
-                    <p className="text-sm font-medium mt-2 w-full text-end">Total: $300.00</p>
+                <div className="py-5">
+                  <p className="text-sm font-semibold mb-2">Ordered food</p>
+                  <div className="border-b-[1px] w-full grid grid-cols-9 items-center bg-gray-50 py-2">
+                    <p className="text-sm font-medium col-span-1"></p>
+                    <p className="text-sm font-medium col-span-5">Food</p>
+                    <p className="text-sm font-medium col-span-2">Price</p>
+                    <p className="text-sm font-medium col-span-1">Qty</p>
                   </div>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={(e) => handleCreateOrder(e)}>Confirm</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                  {selectedFood.map((food: food, index: number) => {
+                    return (
+                      <div className="border-b-[1px] w-full grid grid-cols-9 items-center bg-gray-50 py-2" key={index}>
+                        <div className="col-span-1 px-2">
+                          <img src={food.img_url} className="text-sm font-medium col-span-1 w-10 h-10" />
+                        </div>
+                        <p className="text-sm font-medium col-span-5 truncate">{food.title}</p>
+                        <p className="text-sm font-medium col-span-2">${Number(food.price).toFixed(2)}</p>
+                        <p className="text-sm font-medium col-span-1">{food.quantity}</p>
+                      </div>
+                    );
+                  })}
+                  <p className="text-sm font-medium mt-2 w-full text-end">Total: ${totalPrice.toFixed(2)}</p>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsOpenDialog(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={(e) => handleCreateOrder(e)}>Confirm</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
@@ -412,16 +469,19 @@ const FoodCard = ({ food, selectedFood, handleSelectedFood }: { food: food; sele
   }, [selectedFood]);
 
   return (
-    <Card className="overflow-hidden rounded-none shadow-none bg-gray-50">
+    <Card className="overflow-hidden rounded-none shadow-none bg-gray-50 flex flex-col justify-between">
       <CardHeader className="p-0">
         <CardTitle className="w-full">
           <AspectRatio ratio={1 / 1}>
             <img src={food.img_url} className="h-full w-full object-cover" />
           </AspectRatio>
         </CardTitle>
-        <CardDescription className="px-3 text-lg text-black pt-2">{food.title}</CardDescription>
+        <CardDescription className="px-3 text-lg text-black pt-2">
+          <h1 className="line-clamp-1">{food.title_kh}</h1>
+          <h1 className="line-clamp-1 text-sm">{food.title}</h1>
+        </CardDescription>
       </CardHeader>
-      <CardFooter className="p-3">
+      <CardFooter className=" p-2 mt-2">
         <div className="flex justify-between w-full items-center">
           <p className="text-xl font-bold">$3</p>
           <div className="flex items-center gap-2">
